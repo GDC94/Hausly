@@ -1,0 +1,50 @@
+{
+  "name": "hausly",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "check": "biome check --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "geist": "^1.7.2",
+    "next": "^16.2.9",
+    "radix-ui": "^1.6.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tailwind-merge": "^3.6.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.1",
+    "@tailwindcss/postcss": "^4.3.1",
+    "@testing-library/jest-dom": "^6.9.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^6.0.0",
+    "husky": "^9.1.7",
+    "jsdom": "^29.0.0",
+    "lint-staged": "^17.0.8",
+    "tailwindcss": "^4.3.1",
+    "typescript": "^5.9.0",
+    "vitest": "^4.1.9"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,mjs,json,jsonc,css}": [
+      "biome check --write --no-errors-on-unmatched"
+    ]
+  }
+}
