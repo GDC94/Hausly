@@ -38,3 +38,6 @@ yarn-error.log*
 
 # sanity
 /dist
+
+# project specs — local only, NOT published to GitHub
+/specs/
