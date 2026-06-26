@@ -1,47 +1,45 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 # Proyecto: Sitio web inmobiliaria
 
 ## Índice de documentos — LEER ANTES DE CONSTRUIR
 
-Recorrido de lectura, de mayor a menor altitud. **Empezá por el [`PRD.md`](PRD.md)** (el *qué* y el
-*por qué*); después los specs (el *cómo*, en orden); [`GRAPHIC.md`](GRAPHIC.md) te ubica visualmente
+Recorrido de lectura, de mayor a menor altitud. **Empezá por el [`PRD.md`](specs/PRD.md)** (el *qué* y el
+*por qué*); después los specs (el *cómo*, en orden); [`GRAPHIC.md`](specs/GRAPHIC.md) te ubica visualmente
 en cualquier momento; las tareas del build viven en GitHub Issues.
 
 ### 1. Producto — la puerta de entrada
 
 | Archivo | Contenido |
 |---------|-----------|
-| [`PRD.md`](PRD.md) | Producto: **qué** construimos y **por qué**. Problema, usuarios, requisitos como capacidades, Non-Goals, Definition of Done. Destila los specs. **Leé esto primero.** |
+| [`PRD.md`](specs/PRD.md) | Producto: **qué** construimos y **por qué**. Problema, usuarios, requisitos como capacidades, Non-Goals, Definition of Done. Destila los specs. **Leé esto primero.** |
 
 ### 2. Specs — fuentes de verdad (el *cómo*, en orden)
 
 | Archivo | Contenido |
 |---------|-----------|
-| [`STACK.md`](STACK.md) | Stack principal + tooling (PNPM, Biome, TS strict, Husky). |
-| [`DOMAIN.md`](DOMAIN.md) | Glosario / lenguaje ubicuo: diccionario maestro término-español ↔ identificador-inglés + significado de cada concepto. |
-| [`SANITY-SCHEMA.md`](SANITY-SCHEMA.md) | Modelo de dominio: schemas de Sanity (`property`, `zone`, `agency`, `lead`) + JSON de ejemplo. `name` inglés / `title` español. |
-| [`ARCHITECTURE.md`](ARCHITECTURE.md) | Estructura de carpetas (feature-based), data flow, rendering, mecanismo de filtros. |
-| [`FILTERS.md`](FILTERS.md) | Catálogo de filtros: `searchParam` ↔ campo ↔ predicado GROQ ↔ control UI. Modelo precio/moneda/operación. |
-| [`DESIGN.md`](DESIGN.md) | Design tokens: color, tipografía (clases semánticas), radius, shadows, breakpoints, motion, imágenes. |
-| [`LAYOUT.md`](LAYOUT.md) | Composición visual / anatomía de páginas (wireframe-level): chrome, home híbrido, `PropertyCard`, listado, detalle (patrón Airbnb), contacto. **Lineamiento inicial, sujeto a rediseño.** No es routing (`ARCHITECTURE §7`) ni tokens (`DESIGN`). |
-| [`SEO.md`](SEO.md) | **SEO + SEO local/geo + GEO + Accesibilidad** (guía/checklist accionable). SEO: metadata, JSON-LD `RealEstateListing`, sitemap. Local: GBP, NAP, `RealEstateAgent`. GEO: bots IA, `llms.txt`. A11y: 100% Lighthouse, 100% teclado, contraste WCAG AA. Medición lab vs campo. |
-| [`TESTING.md`](TESTING.md) | Estrategia de testing: pirámide determinista (Vitest + RTL, Playwright, `lhci`) + capa exploratoria (`agent-browser`). TDD en lógica pura. Bypass de previews de Vercel. Deploy = Vercel (detalle en `STACK.md`). |
-| [`ANALYTICS.md`](ANALYTICS.md) | Estrategia de medición (PostHog): funnel descubrir→lead, taxonomía de ~6 eventos, lead server-side, banner de consentimiento, sin PII / sin replay. `shared/analytics` tipado. |
+| [`STACK.md`](specs/STACK.md) | Stack principal + tooling (PNPM, Biome, TS strict, Husky). |
+| [`DOMAIN.md`](specs/DOMAIN.md) | Glosario / lenguaje ubicuo: diccionario maestro término-español ↔ identificador-inglés + significado de cada concepto. |
+| [`SANITY-SCHEMA.md`](specs/SANITY-SCHEMA.md) | Modelo de dominio: schemas de Sanity (`property`, `zone`, `agency`, `lead`) + JSON de ejemplo. `name` inglés / `title` español. |
+| [`ARCHITECTURE.md`](specs/ARCHITECTURE.md) | Estructura de carpetas (feature-based), data flow, rendering, mecanismo de filtros. |
+| [`FILTERS.md`](specs/FILTERS.md) | Catálogo de filtros: `searchParam` ↔ campo ↔ predicado GROQ ↔ control UI. Modelo precio/moneda/operación. |
+| [`DESIGN.md`](specs/DESIGN.md) | Design tokens: color, tipografía (clases semánticas), radius, shadows, breakpoints, motion, imágenes. |
+| [`LAYOUT.md`](specs/LAYOUT.md) | Composición visual / anatomía de páginas (wireframe-level): chrome, home híbrido, `PropertyCard`, listado, detalle (patrón Airbnb), contacto. **Lineamiento inicial, sujeto a rediseño.** No es routing (`ARCHITECTURE §7`) ni tokens (`DESIGN`). |
+| [`SEO.md`](specs/SEO.md) | **SEO + SEO local/geo + GEO + Accesibilidad** (guía/checklist accionable). SEO: metadata, JSON-LD `RealEstateListing`, sitemap. Local: GBP, NAP, `RealEstateAgent`. GEO: bots IA, `llms.txt`. A11y: 100% Lighthouse, 100% teclado, contraste WCAG AA. Medición lab vs campo. |
+| [`TESTING.md`](specs/TESTING.md) | Estrategia de testing: pirámide determinista (Vitest + RTL, Playwright, `lhci`) + capa exploratoria (`agent-browser`). TDD en lógica pura. Bypass de previews de Vercel. Deploy = Vercel (detalle en `STACK.md`). |
+| [`ANALYTICS.md`](specs/ANALYTICS.md) | Estrategia de medición (PostHog): funnel descubrir→lead, taxonomía de ~6 eventos, lead server-side, banner de consentimiento, sin PII / sin replay. `shared/analytics` tipado. |
 
 ### 3. Vistas derivadas
 
 | Archivo | Contenido |
 |---------|-----------|
-| [`GRAPHIC.md`](GRAPHIC.md) | Mapa visual (Mermaid `handDrawn`) de la arquitectura: viaje del dato, camino de las props, render por ruta, cache/revalidación, leads. **Vista derivada** — la fuente de verdad son los specs. |
+| [`GRAPHIC.md`](specs/GRAPHIC.md) | Mapa visual (Mermaid `handDrawn`) de la arquitectura: viaje del dato, camino de las props, render por ruta, cache/revalidación, leads. **Vista derivada** — la fuente de verdad son los specs. |
 
 ### 4. Ejecución
 
 | Dónde | Contenido |
 |-------|-----------|
-| **GitHub Issues** | La lista de tareas del build vive como **issues** (generados con `/to-issues` desde [`PRD.md`](PRD.md)), por slices verticales. **No hay `TASKS.md`**: el tracker es la fuente única de tareas. |
+| **GitHub Issues** | La lista de tareas del build vive como **issues** (generados con `/to-issues` desde [`PRD.md`](specs/PRD.md)), por slices verticales. **No hay `TASKS.md`**: el tracker es la fuente única de tareas. |
 
 ## Reglas del proyecto inmobiliaria
 
@@ -61,26 +59,51 @@ en cualquier momento; las tareas del build viven en GitHub Issues.
 
 ## Agent skills
 
+### Skill set
+
+El subconjunto oficial de skills del proyecto (curado del set global al stack) + cuándo dispara cada una y las excluidas con su razón → [`specs/SKILLS.md`](specs/SKILLS.md).
+
+### Skills — auto-load por contexto
+
+**Regla dura:** antes de codear un área, leé la(s) skill(s) que mapea la fila. No es opcional. El detalle de cada skill está en [`specs/SKILLS.md`](specs/SKILLS.md); los *compact rules* para inyectar a sub-agentes, en [`.atl/skill-registry.md`](.atl/skill-registry.md).
+
+| Contexto detectado | Leé ANTES de codear |
+|--------------------|---------------------|
+| Rutas, RSC, Server Actions, metadata, `app/` | `next-best-practices` · `vercel-react-best-practices` |
+| Schema/GROQ/TypeGen/Studio (`features/*`, `sanity/`) | `sanity-best-practices` |
+| `@theme`, tokens, componentes `shared/ui`, Tailwind | `tailwind-design-system` · `pixel-perfect-tailwind` |
+| Diseñar/pulir una pantalla o componente visual | `impeccable` |
+| Lógica pura (`*.test.ts` primero: Zod, GROQ build, precio, `createLead`) | `tdd` · `codebase-design` |
+| Review de UI / accesibilidad antes de cerrar | `web-design-guidelines` |
+| Page load, CWV, bundle, Lighthouse | `performance-optimization` |
+| Tocar lenguaje de dominio / ADRs | `domain-modeling` |
+| Bug difícil / regresión de perf | `diagnose` |
+| Review adversarial pre-merge | `judgment-day` |
+| Conversación→PRD / PRD→issues / crear issue / triage / abrir PR | `to-prd` · `to-issues` · `issue-creation` · `triage` · `branch-pr` |
+
 ### Issue tracker
 
-Issues viven en **GitHub Issues** (`GDC94/Hausly`) vía el `gh` CLI. PRs externos **NO** son superficie de triage. Ver [`docs/agents/issue-tracker.md`](docs/agents/issue-tracker.md).
+Issues viven en **GitHub Issues** (`GDC94/Hausly`) vía el `gh` CLI. PRs externos **NO** son superficie de triage. Ver [`specs/agents/tracker.md`](specs/agents/tracker.md).
 
 ### Triage labels
 
-Cinco roles canónicos, strings default (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). Ver [`docs/agents/triage-labels.md`](docs/agents/triage-labels.md).
+Cinco roles canónicos, strings default (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). Ver [`specs/agents/labels.md`](specs/agents/labels.md).
 
 ### Domain docs
 
-Single-context. El glosario del dominio es **[`DOMAIN.md`](DOMAIN.md)** (lenguaje ubicuo) — no hay `CONTEXT.md`. Specs indexados arriba ("Índice de documentos"). ADRs en `docs/adr/` (lazy). Ver [`docs/agents/domain.md`](docs/agents/domain.md).
+Single-context. El glosario del dominio es **[`DOMAIN.md`](specs/DOMAIN.md)** (lenguaje ubicuo) — no hay `CONTEXT.md`. Specs indexados arriba ("Índice de documentos"). ADRs en `docs/adr/` (lazy). Ver [`specs/agents/domain.md`](specs/agents/domain.md).
 
 ## Workflow de desarrollo
 
 - **`main` siempre deployable** = producción (Vercel). **El agente NUNCA pushea a `main`.**
 - **Una unidad de trabajo = un issue `ready-for-agent` = una rama = un PR = un preview = un squash-merge.**
 - Por cada issue:
-  1. Sesión fresca · rama desde `main`: `<issue#>-<slug>` (ej. `42-property-card`).
+  1. Sesión fresca · rama desde `main`: `<tipo>/<issue#>-<slug>` (ej. `feat/42-property-card`) — `tipo` ∈ regex de `branch-pr` (`feat|fix|chore|docs|style|refactor|perf|test|build|ci|revert`). Los 15 nombres definitivos viven en [`specs/ISSUES.md`](specs/ISSUES.md) (línea `Branch:` por issue).
   2. Implementar **TDD** (Vitest primero) respetando los specs · commits **conventional** (sin atribución).
   3. Push → abrir **PR** (`/branch-pr`) · linkear `Closes #<n>`.
-  4. **Vercel deploya un preview** del PR → testing real ahí (Playwright con bypass, `agent-browser`, `lhci`). Ver [`TESTING.md`](TESTING.md).
+  4. **Vercel deploya un preview** del PR → testing real ahí (Playwright con bypass, `agent-browser`, `lhci`). Ver [`TESTING.md`](specs/TESTING.md).
   5. **Gates en el PR**: Vitest + Playwright + `lhci` (+ `/code-review` opcional).
   6. **El usuario revisa y mergea (squash)** → `main` → Vercel deploya a prod. **El merge es decisión del usuario** (merge = deploy a prod).
+
+## 5. Author: German Derbes Catoni
+
