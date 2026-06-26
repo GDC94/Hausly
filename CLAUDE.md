@@ -58,3 +58,29 @@ en cualquier momento; las tareas del build viven en GitHub Issues.
 
 - **Mercado**: Argentina → precios moneda dual USD + ARS.
 - **Arquitectura, filtros y rendering**: mecanismo y estructura en `ARCHITECTURE.md`; **catálogo de filtros** (qué se filtra, params, GROQ) en `FILTERS.md` (fuente única). Resumen: feature-based / screaming (`features/{properties,leads,search}`), filtros GROQ server-side con `searchParams`, render por-ruta (detalle ISR + on-demand revalidation).
+
+## Agent skills
+
+### Issue tracker
+
+Issues viven en **GitHub Issues** (`GDC94/Hausly`) vía el `gh` CLI. PRs externos **NO** son superficie de triage. Ver [`docs/agents/issue-tracker.md`](docs/agents/issue-tracker.md).
+
+### Triage labels
+
+Cinco roles canónicos, strings default (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). Ver [`docs/agents/triage-labels.md`](docs/agents/triage-labels.md).
+
+### Domain docs
+
+Single-context. El glosario del dominio es **[`DOMAIN.md`](DOMAIN.md)** (lenguaje ubicuo) — no hay `CONTEXT.md`. Specs indexados arriba ("Índice de documentos"). ADRs en `docs/adr/` (lazy). Ver [`docs/agents/domain.md`](docs/agents/domain.md).
+
+## Workflow de desarrollo
+
+- **`main` siempre deployable** = producción (Vercel). **El agente NUNCA pushea a `main`.**
+- **Una unidad de trabajo = un issue `ready-for-agent` = una rama = un PR = un preview = un squash-merge.**
+- Por cada issue:
+  1. Sesión fresca · rama desde `main`: `<issue#>-<slug>` (ej. `42-property-card`).
+  2. Implementar **TDD** (Vitest primero) respetando los specs · commits **conventional** (sin atribución).
+  3. Push → abrir **PR** (`/branch-pr`) · linkear `Closes #<n>`.
+  4. **Vercel deploya un preview** del PR → testing real ahí (Playwright con bypass, `agent-browser`, `lhci`). Ver [`TESTING.md`](TESTING.md).
+  5. **Gates en el PR**: Vitest + Playwright + `lhci` (+ `/code-review` opcional).
+  6. **El usuario revisa y mergea (squash)** → `main` → Vercel deploya a prod. **El merge es decisión del usuario** (merge = deploy a prod).
