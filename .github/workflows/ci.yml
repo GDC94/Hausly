@@ -32,6 +32,13 @@ jobs:
   lighthouse:
     name: lighthouse
     runs-on: ubuntu-latest
+    # Valores públicos de Sanity, necesarios en build time (el client/config los
+    # valida con Zod). El read token NO va acá: el build no fetchea. projectId y
+    # dataset son públicos (aparecen en el bundle del cliente igual).
+    env:
+      NEXT_PUBLIC_SANITY_PROJECT_ID: r15bgrsw
+      NEXT_PUBLIC_SANITY_DATASET: production
+      NEXT_PUBLIC_SANITY_API_VERSION: "2025-01-01"
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
