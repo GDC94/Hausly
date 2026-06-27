@@ -1,6 +1,5 @@
 import type { Metadata } from "next"
-import { PropertyGrid } from "@/features/properties/components/property-grid"
-import { getProperties } from "@/features/properties/queries/get-properties"
+import { getProperties, PropertyGrid } from "@/features/properties"
 
 export const metadata: Metadata = {
   title: "Propiedades",

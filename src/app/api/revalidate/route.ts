@@ -33,10 +33,11 @@ export async function POST(req: NextRequest) {
       return new Response("Payload inválido", { status: 400 })
     }
 
-    // Next 16: `revalidateTag` exige un perfil de cache life. `updateTag` no
-    // sirve acá (sólo corre en Server Actions, no en route handlers). Para
-    // purgar el tag desde el webhook → perfil "max".
-    revalidateTag("property", "max")
+    // Revalida el tag que matchea el `_type` publicado (property | zone): el
+    // listado está taggeado con ambos. `{ expire: 0 }` fuerza expiración
+    // INMEDIATA (no stale-while-revalidate): el primer visitante tras el publish
+    // ya ve el contenido nuevo, que es justo lo que un webhook de CMS necesita.
+    revalidateTag(parsed.data._type, { expire: 0 })
 
     return NextResponse.json({ revalidated: true, type: parsed.data._type })
   } catch (error) {

@@ -19,9 +19,6 @@ export const propertiesQuery = defineQuery(`
     _id,
     title,
     "slug": slug.current,
-    propertyType,
-    condition,
-    status,
     rooms,
     bathrooms,
     coveredArea,
@@ -40,8 +37,11 @@ export const propertiesQuery = defineQuery(`
  * se regenera por contenido, no por TTL (specs/ARCHITECTURE.md §4).
  */
 export async function getProperties() {
+  // Tag `zone` además de `property`: la card renderiza `location.zone->name`, así
+  // que renombrar una zona también debe invalidar el listado (el webhook revalida
+  // el tag que matchea el `_type` del documento publicado).
   return sanityFetch<PropertiesQueryResult>({
     query: propertiesQuery,
-    tags: ["property"],
+    tags: ["property", "zone"],
   })
 }
