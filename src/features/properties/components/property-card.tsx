@@ -1,6 +1,6 @@
 import Link from "next/link"
+import { OPERATION_LABELS } from "@/shared/lib/labels"
 import { buildPriceLine } from "../lib/build-price-line"
-import { OPERATION_LABELS } from "../lib/labels"
 import type { PropertyCardData } from "../types"
 import { PropertyImage } from "./property-image"
 

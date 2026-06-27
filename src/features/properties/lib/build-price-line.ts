@@ -1,6 +1,6 @@
 import { formatPrice } from "@/shared/lib/format-price"
+import { OPERATION_LABELS } from "@/shared/lib/labels"
 import type { PropertyCardData } from "../types"
-import { OPERATION_LABELS } from "./labels"
 
 /**
  * Línea de precio de la card. Precio DUAL: una propiedad puede tener varias
