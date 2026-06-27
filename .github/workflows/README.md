@@ -6,17 +6,27 @@ como **gates que bloquean el merge** (vía branch protection de `main`):
 | Job | Qué corre | Bloquea si… |
 |-----|-----------|-------------|
 | `quality` | `pnpm lint` (Biome) · `pnpm typecheck` (tsc) · `pnpm test` (Vitest) | falla lint, type error, o test rojo |
-| `lighthouse` | build de producción + **Lighthouse CI** contra `localhost` | **accesibilidad < 100** (`error`). CWV/SEO/perf van como `warn` |
+| `lighthouse` | build de producción + **Lighthouse CI** contra `localhost` (mobile, mediana de 3 runs) | **a11y < 100**, **SEO < 98**, o **CWV catastrófico** (LCP > 4s / TBT > 600ms / CLS > 0.1). Perf < 98 → `warn` |
 
 ### Por qué Lighthouse mide contra build **local** (no contra el preview)
 
 La accesibilidad es una propiedad del DOM/semántica renderizada → **idéntica** en
 `localhost` o en Vercel. Medir local da un gate **determinista, sin secrets y sin
-depender de Vercel**. El CWV **real** es de **campo** (Vercel Speed Insights), que es la
-fuente de verdad según `specs/SEO §9` — el número lab de Lighthouse es señal blanda, por
-eso va como `warn`. (Decisión registrada del issue #2.)
+depender de Vercel**. (Decisión registrada del issue #2.)
 
-Umbrales en [`lighthouserc.json`](../../lighthouserc.json).
+### Por qué SEO bloquea pero el score de perf no
+
+**SEO** es determinístico (meta tags, `lang`, crawlability) → estable, se gatea duro en
+**≥98**. El **score de performance** de Lighthouse es de **laboratorio** y varía por la
+carga del runner; en mobile con throttling 4x, una app Next sana ronda ~95 (JS del
+framework). Gatearlo duro en 98 sería flaky y bloquearía PRs sanos. Por eso:
+
+- **perf score** → `warn ≥98` (meta visible, no bloquea).
+- **piso duro** → vía **CWV** (`LCP > 4s` / `TBT > 600ms` / `CLS > 0.1` bloquean): captura
+  regresiones reales sin depender del número exacto.
+
+El CWV **real** es de **campo** (Vercel Speed Insights), fuente de verdad según
+`specs/SEO §9`. Umbrales en [`lighthouserc.json`](../../lighthouserc.json).
 
 ### Cómo agregar un check nuevo
 
