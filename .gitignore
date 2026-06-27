@@ -38,6 +38,8 @@ yarn-error.log*
 
 # sanity
 /dist
+# typegen intermediate (regenerado por `pnpm typegen`); el sanity.types.ts sí se commitea
+/schema.json
 
 # project specs — local only, NOT published to GitHub
 /specs/
