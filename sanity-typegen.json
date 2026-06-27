@@ -1,5 +1,6 @@
 {
   "path": "./src/**/*.{ts,tsx}",
   "schema": "./schema.json",
-  "generates": "./src/shared/sanity/sanity.types.ts"
+  "generates": "./src/shared/sanity/sanity.types.ts",
+  "overloadClientMethods": false
 }

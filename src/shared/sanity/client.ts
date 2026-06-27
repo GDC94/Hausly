@@ -18,9 +18,14 @@ export const client = createClient({
 })
 
 /**
- * Lectura tipada server-side. La invalidación es por tags (ver ARCHITECTURE §4):
- * las queries pasan los tags del contenido que tocan (ej. ['property']) y el
- * webhook de Sanity hace revalidateTag.
+ * Lectura tipada server-side, **cacheada e invalidada por tags** (ver
+ * ARCHITECTURE §4): las queries pasan los tags del contenido que tocan
+ * (ej. ['property']) y el webhook de Sanity hace `revalidateTag`.
+ *
+ * `cache: "force-cache"` es obligatorio: en Next 16 `fetch` es `no-store` por
+ * defecto, así que sin esto la query NO se cachearía y el tag no tendría nada
+ * que invalidar. Con force-cache + tags, la vista caliente se sirve del cache y
+ * se regenera por contenido (no por TTL).
  */
 export async function sanityFetch<T>({
   query,
@@ -32,6 +37,7 @@ export async function sanityFetch<T>({
   tags?: string[]
 }): Promise<T> {
   return client.fetch<T>(query, params, {
+    cache: "force-cache",
     next: { tags },
   })
 }

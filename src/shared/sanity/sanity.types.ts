@@ -323,3 +323,42 @@ export type AllSanitySchemaTypes =
   | SanityFileAsset
   | SanityAssetSourceData
   | SanityImageAsset
+
+// Source: src/features/properties/queries/get-properties.ts
+// Variable: propertiesQuery
+// Query: *[_type == "property" && status == "available"] | order(_createdAt desc) {    _id,    title,    "slug": slug.current,    propertyType,    condition,    status,    rooms,    bathrooms,    coveredArea,    "zone": location.zone->name,    operations[]{ type, price },    mainImage {      ...,      "lqip": asset->metadata.lqip    }  }
+export type PropertiesQueryResult = Array<{
+  _id: string
+  title: string | null
+  slug: string | null
+  propertyType:
+    | "apartment"
+    | "commercial"
+    | "farm"
+    | "garage"
+    | "house"
+    | "land"
+    | "office"
+    | "ph"
+    | "warehouse"
+    | null
+  condition: "brandNew" | "preConstruction" | "used" | null
+  status: "available"
+  rooms: number | null
+  bathrooms: number | null
+  coveredArea: number | null
+  zone: string | null
+  operations: Array<{
+    type: "rent" | "sale" | "temporaryRent" | null
+    price: Price | null
+  }> | null
+  mainImage: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    _type: "image"
+    lqip: string | null
+  } | null
+}>
