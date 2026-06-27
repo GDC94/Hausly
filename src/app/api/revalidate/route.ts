@@ -9,13 +9,19 @@ import { z } from "zod"
  * secret (`parseBody`), se valida el PAYLOAD con Zod y se revalida el tag
  * `property` — las vistas cacheadas se regeneran por contenido, no por TTL.
  *
- * Configurar en Sanity (manage → API → Webhooks) con una proyección mínima:
+ * Configurar en Sanity (manage → API → Webhooks), filtro `_type in
+ * ["property","zone"]`, proyección mínima:
  *   { "_type": _type, "slug": slug.current }
+ *
+ * En un delete/unpublish el documento ya no existe → la proyección puede no traer
+ * `_type`. Por eso es opcional: si falta, revalidamos ambos tags como fallback.
  */
 const payloadSchema = z.object({
-  _type: z.string().min(1),
+  _type: z.string().min(1).nullish(),
   slug: z.string().nullish(),
 })
+
+const LISTING_TAGS = ["property", "zone"] as const
 
 export async function POST(req: NextRequest) {
   try {
@@ -33,13 +39,17 @@ export async function POST(req: NextRequest) {
       return new Response("Payload inválido", { status: 400 })
     }
 
-    // Revalida el tag que matchea el `_type` publicado (property | zone): el
-    // listado está taggeado con ambos. `{ expire: 0 }` fuerza expiración
-    // INMEDIATA (no stale-while-revalidate): el primer visitante tras el publish
-    // ya ve el contenido nuevo, que es justo lo que un webhook de CMS necesita.
-    revalidateTag(parsed.data._type, { expire: 0 })
+    // Revalida el tag que matchea el `_type` (property | zone). En delete sin
+    // `_type` → revalida ambos como fallback, así una propiedad borrada deja de
+    // verse. `{ expire: 0 }` = expiración INMEDIATA (no stale-while-revalidate):
+    // el primer visitante tras el cambio ya ve el contenido nuevo.
+    const type = parsed.data._type
+    const tags = type === "property" || type === "zone" ? [type] : LISTING_TAGS
+    for (const tag of tags) {
+      revalidateTag(tag, { expire: 0 })
+    }
 
-    return NextResponse.json({ revalidated: true, type: parsed.data._type })
+    return NextResponse.json({ revalidated: true, tags })
   } catch (error) {
     console.error("[revalidate] error:", error)
     return new Response("Error revalidando", { status: 500 })
