@@ -30,8 +30,19 @@ export function parseSanityEnv(source: Record<string, string | undefined>): Sani
 let cached: SanityEnv | undefined
 
 /** Lee + valida el env del proceso una sola vez. Lazy: importar este módulo no
- *  dispara la validación (así el test de parseSanityEnv no depende del entorno). */
+ *  dispara la validación (así el test de parseSanityEnv no depende del entorno).
+ *
+ *  Las refs a `process.env.NEXT_PUBLIC_*` son ESTÁTICAS a propósito: Next.js solo
+ *  inlinea en el bundle del cliente las referencias literales por clave, no
+ *  `process.env` entero. El Studio corre en el cliente, así que pasar el objeto
+ *  completo lo dejaba `undefined` (ZodError). Ver specs/STACK.md. */
 export function getSanityEnv(): SanityEnv {
-  if (!cached) cached = parseSanityEnv(process.env)
+  if (!cached) {
+    cached = parseSanityEnv({
+      NEXT_PUBLIC_SANITY_PROJECT_ID: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+      NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET,
+      NEXT_PUBLIC_SANITY_API_VERSION: process.env.NEXT_PUBLIC_SANITY_API_VERSION,
+    })
+  }
   return cached
 }
