@@ -1,0 +1,51 @@
+"use server"
+
+import { logNotifier } from "../infra/log-notifier"
+import { noopAnalytics } from "../infra/noop-analytics"
+import { sanityLeadRepo } from "../infra/sanity-lead-repo"
+import { createLead } from "../lib/create-lead"
+import { leadSchema } from "../schemas/lead-schema"
+
+/** Estado que el Server Action devuelve al `LeadForm` para pintar feedback. */
+export type LeadFormState = {
+  status: "success" | "error"
+  message: string
+  /** Errores por campo cuando la re-validación server-side falla. */
+  fieldErrors?: Record<string, string>
+}
+
+/**
+ * Server Action de envío de consulta (specs/ARCHITECTURE.md §3). Es un **adapter
+ * fino**: re-valida con el MISMO `leadSchema` (nunca confiar en el cliente),
+ * cablea los adapters reales y delega TODA la orquestación + invariante de orden
+ * en el core `createLead`. El Resend real está diferido → `logNotifier` (tapón).
+ */
+export async function submitLead(raw: unknown): Promise<LeadFormState> {
+  const parsed = leadSchema.safeParse(raw)
+  if (!parsed.success) {
+    const fieldErrors: Record<string, string> = {}
+    for (const issue of parsed.error.issues) {
+      const key = issue.path[0]
+      if (typeof key === "string" && !fieldErrors[key]) fieldErrors[key] = issue.message
+    }
+    return { status: "error", message: "Revisá los datos del formulario.", fieldErrors }
+  }
+
+  try {
+    await createLead(parsed.data, {
+      repo: sanityLeadRepo,
+      notifier: logNotifier,
+      analytics: noopAnalytics,
+    })
+    return {
+      status: "success",
+      message: "¡Gracias por tu consulta! Te vamos a contactar a la brevedad.",
+    }
+  } catch (error) {
+    console.error("[leads] no se pudo guardar la consulta:", error)
+    return {
+      status: "error",
+      message: "No pudimos enviar tu consulta. Probá de nuevo o escribinos por WhatsApp.",
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import Link from "next/link"
+import { LeadForm } from "@/features/leads"
 import { whatsappUrl } from "@/shared/config/site"
 import { formatPrice } from "@/shared/lib/format-price"
 import { OPERATION_LABELS } from "@/shared/lib/labels"
@@ -47,10 +47,17 @@ export function PropertyContactCard({ property }: { property: PropertyDetail }) 
         </p>
       ) : null}
 
-      <div className="mt-6 space-y-3">
-        <Button asChild size="lg" className="h-11 w-full">
-          <Link href="/contacto">Consultar</Link>
-        </Button>
+      {/* Form inline scoped a esta propiedad (issue #11): la consulta queda
+          vinculada al `_id`, con el mensaje pre-cargado. Sin navegar fuera del
+          detalle. WhatsApp queda como canal alternativo. */}
+      <div className="mt-6">
+        <h2 className="text-body font-semibold text-foreground">Consultá por esta propiedad</h2>
+        <div className="mt-4">
+          <LeadForm propertyId={property._id} defaultMessage={message} />
+        </div>
+      </div>
+
+      <div className="mt-3">
         <Button asChild variant="outline" size="lg" className="h-11 w-full">
           <a href={whatsappUrl(message)} target="_blank" rel="noopener noreferrer">
             <WhatsAppIcon className="size-4" />
