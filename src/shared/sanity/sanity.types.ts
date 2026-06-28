@@ -325,6 +325,27 @@ export type AllSanitySchemaTypes =
   | SanityAssetSourceData
   | SanityImageAsset
 
+// Source: src/features/agency/queries/get-agency.ts
+// Variable: agencyQuery
+// Query: *[_type == "agency"][0]{    name,    phone,    email,    address,    logo,    socials  }
+export type AgencyQueryResult = {
+  name: string | null
+  phone: string | null
+  email: string | null
+  address: string | null
+  logo: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: "image"
+  } | null
+  socials: {
+    instagram?: string
+    facebook?: string
+  } | null
+} | null
+
 // Source: src/features/properties/queries/build-properties-query.ts
 // Variable: propertiesQuery
 // Query: {    "items": *[_type == "property"      && status == "available"      && (!defined($types) || propertyType in $types)      && (!defined($zones) || location.zone->slug.current in $zones)      && (!defined($rooms) || rooms >= $rooms)      && (!defined($bathrooms) || bathrooms >= $bathrooms)      && (!defined($areaMin) || coveredArea >= $areaMin)      && (!defined($areaMax) || coveredArea <= $areaMax)      && (!defined($parking) || parkingSpaces >= $parking)      && (!defined($conditions) || condition in $conditions)      && (!defined($amenities) || count(amenities[@ in $amenities]) == count($amenities))      && (!defined($q) || title match $q || code match $q || (location.showAddress == true && location.address match $q))      && count(operations[        (!defined($operation) || type == $operation) &&        (!defined($currency) || price.currency == $currency) &&        (!defined($priceMin) || price.amount >= $priceMin) &&        (!defined($priceMax) || price.amount <= $priceMax)      ]) > 0    ] | order(_createdAt desc) [0...$end] {      _id,      title,      "slug": slug.current,      rooms,      bathrooms,      coveredArea,      "zone": location.zone->name,      operations[]{ type, price },      mainImage {        ...,        "lqip": asset->metadata.lqip      }    },    "total": count(*[_type == "property"      && status == "available"      && (!defined($types) || propertyType in $types)      && (!defined($zones) || location.zone->slug.current in $zones)      && (!defined($rooms) || rooms >= $rooms)      && (!defined($bathrooms) || bathrooms >= $bathrooms)      && (!defined($areaMin) || coveredArea >= $areaMin)      && (!defined($areaMax) || coveredArea <= $areaMax)      && (!defined($parking) || parkingSpaces >= $parking)      && (!defined($conditions) || condition in $conditions)      && (!defined($amenities) || count(amenities[@ in $amenities]) == count($amenities))      && (!defined($q) || title match $q || code match $q || (location.showAddress == true && location.address match $q))      && count(operations[        (!defined($operation) || type == $operation) &&        (!defined($currency) || price.currency == $currency) &&        (!defined($priceMin) || price.amount >= $priceMin) &&        (!defined($priceMax) || price.amount <= $priceMax)      ]) > 0    ])  }
@@ -470,6 +491,14 @@ export type PropertyQueryResult = {
 // Query: *[_type == "property" && defined(slug.current)]{ "slug": slug.current }
 export type PropertySlugsQueryResult = Array<{
   slug: string | null
+}>
+
+// Source: src/features/properties/queries/get-property.ts
+// Variable: propertySitemapQuery
+// Query: *[_type == "property" && status == "available" && defined(slug.current)]{    "slug": slug.current,    _updatedAt  }
+export type PropertySitemapQueryResult = Array<{
+  slug: string | null
+  _updatedAt: string
 }>
 
 // Source: src/features/search/queries/get-zone.ts

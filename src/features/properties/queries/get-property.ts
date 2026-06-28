@@ -1,6 +1,10 @@
 import { defineQuery } from "next-sanity"
 import { sanityFetch } from "@/shared/sanity/client"
-import type { PropertyQueryResult, PropertySlugsQueryResult } from "@/shared/sanity/sanity.types"
+import type {
+  PropertyQueryResult,
+  PropertySitemapQueryResult,
+  PropertySlugsQueryResult,
+} from "@/shared/sanity/sanity.types"
 
 /**
  * Detalle de una propiedad por slug (issue #9, specs/LAYOUT.md §7). Trae la forma
@@ -61,6 +65,18 @@ export const propertySlugsQuery = defineQuery(`
 `)
 
 /**
+ * Propiedades indexables para el sitemap (specs/SEO.md §5): sólo `available`
+ * (no rankear lo vendido, §2). Proyecta lo mínimo para una entrada de sitemap —
+ * `slug` (URL) y `_updatedAt` (`lastModified`).
+ */
+export const propertySitemapQuery = defineQuery(`
+  *[_type == "property" && status == "available" && defined(slug.current)]{
+    "slug": slug.current,
+    _updatedAt
+  }
+`)
+
+/**
  * Adapter de detalle. Cacheado por tags (`['property','zone']`): publicar revalida
  * vía webhook `/api/revalidate` (specs/ARCHITECTURE.md §4), no por TTL. Tag `zone`
  * porque la card de contacto / breadcrumb usan `location.zone->name`.
@@ -79,6 +95,14 @@ export async function getProperty(slug: string): Promise<PropertyQueryResult> {
 export async function getPropertySlugs(): Promise<PropertySlugsQueryResult> {
   return sanityFetch<PropertySlugsQueryResult>({
     query: propertySlugsQuery,
+    tags: ["property"],
+  })
+}
+
+/** Propiedades indexables (slug + `_updatedAt`) para `app/sitemap.ts`. */
+export async function getPropertiesForSitemap(): Promise<PropertySitemapQueryResult> {
+  return sanityFetch<PropertySitemapQueryResult>({
+    query: propertySitemapQuery,
     tags: ["property"],
   })
 }
