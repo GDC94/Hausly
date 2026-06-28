@@ -33,7 +33,7 @@ export const propertiesQuery = defineQuery(`
     && (!defined($parking) || parkingSpaces >= $parking)
     && (!defined($conditions) || condition in $conditions)
     && (!defined($amenities) || count(amenities[@ in $amenities]) == count($amenities))
-    && (!defined($q) || title match $q || code match $q || location.address match $q)
+    && (!defined($q) || title match $q || code match $q || (location.showAddress == true && location.address match $q))
   ] | order(_createdAt desc) {
     _id,
     title,
@@ -77,6 +77,11 @@ export type PropertiesQueryParams = {
  * `q` recibe un **wildcard de prefijo** (`term*`) — `match` tokeniza por palabra,
  * así "pal" encuentra "Palermo" (specs/FILTERS.md §4, opción A). El folding de
  * acentos es una limitación conocida y aceptada del MVP.
+ *
+ * **Privacidad:** el match sobre `location.address` va gateado por
+ * `location.showAddress == true`. Si la dirección no es pública (privacidad,
+ * specs/SANITY-SCHEMA.md §4) NO puede usarse como oráculo: buscar un token de
+ * dirección no debe revelar por descarte una propiedad de dirección oculta.
  */
 export function buildPropertiesQuery(filters: PropertyFilters): {
   query: typeof propertiesQuery

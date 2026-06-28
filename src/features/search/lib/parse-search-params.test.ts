@@ -43,6 +43,15 @@ describe("parseSearchParams", () => {
         amenities: ["pool", "grill"],
       })
     })
+
+    it("deduplicates repeated values (count(...) AND predicate must not over-count)", () => {
+      expect(parseSearchParams({ amenities: "pool,pool,grill" })).toEqual({
+        amenities: ["pool", "grill"],
+      })
+      expect(parseSearchParams({ amenities: ["pool", "pool"] })).toEqual({
+        amenities: ["pool"],
+      })
+    })
   })
 
   describe("zone (slug list, no enum validation)", () => {
@@ -54,6 +63,12 @@ describe("parseSearchParams", () => {
 
     it("drops empty slugs", () => {
       expect(parseSearchParams({ zone: "palermo,, ,belgrano" })).toEqual({
+        zones: ["palermo", "belgrano"],
+      })
+    })
+
+    it("deduplicates repeated slugs", () => {
+      expect(parseSearchParams({ zone: "palermo,palermo,belgrano" })).toEqual({
         zones: ["palermo", "belgrano"],
       })
     })

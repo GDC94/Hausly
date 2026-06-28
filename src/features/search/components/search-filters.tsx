@@ -24,7 +24,18 @@ type SearchFiltersProps = {
  */
 export function SearchFilters({ filters, zones }: SearchFiltersProps) {
   return (
-    <form method="get" action="/propiedades" className="flex flex-col gap-6">
+    // `key` derivada de los filtros activos: los controles son uncontrolled
+    // (`defaultChecked`/`defaultValue`), así que sin esto una navegación soft
+    // (el `<Link>` de "Limpiar", el botón atrás) reconciliaría el form sin
+    // remontarlo y dejaría tildes/valores viejos en el DOM mientras la URL ya
+    // cambió — rompiendo "URL = única fuente de verdad". Cambiar la key fuerza
+    // el remount → los controles se rehidratan desde la URL nueva.
+    <form
+      key={JSON.stringify(filters)}
+      method="get"
+      action="/propiedades"
+      className="flex flex-col gap-6"
+    >
       <div className="flex flex-col gap-1.5">
         <label htmlFor="filter-q" className="text-body-sm font-medium text-foreground">
           Buscar
@@ -34,7 +45,7 @@ export function SearchFilters({ filters, zones }: SearchFiltersProps) {
           name="q"
           type="search"
           defaultValue={filters.q ?? ""}
-          placeholder="Barrio, código o dirección"
+          placeholder="Código, título o dirección"
           className="h-9 rounded-md border bg-background px-3 text-body-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
         />
       </div>

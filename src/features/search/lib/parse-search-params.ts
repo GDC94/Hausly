@@ -52,11 +52,18 @@ export function parseSearchParams(raw: RawSearchParams): PropertyFilters {
   return filters
 }
 
-/** Normaliza a tokens: acepta clave repetida (array) o coma-separado, trim, sin vacíos. */
+/**
+ * Normaliza a tokens: acepta clave repetida (array) o coma-separado, trim, sin
+ * vacíos y **deduplicado**. El dedupe es crítico para amenities: el predicado
+ * GROQ compara `count(amenities[@ in $amenities]) == count($amenities)`, así que
+ * un valor repetido en la URL (`?amenities=pool&amenities=pool`) infla
+ * `count($amenities)` y haría fallar un filtro que debería ser "Pileta" a secas.
+ */
 function tokens(value: string | string[] | undefined): string[] {
   if (value === undefined) return []
   const parts = Array.isArray(value) ? value : value.split(",")
-  return parts.map((part) => part.trim()).filter((part) => part.length > 0)
+  const cleaned = parts.map((part) => part.trim()).filter((part) => part.length > 0)
+  return [...new Set(cleaned)]
 }
 
 /** Lista validada contra un enum cerrado; `undefined` si no queda ningún valor válido. */

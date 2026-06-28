@@ -72,7 +72,7 @@ describe("buildPropertiesQuery", () => {
       "!defined($amenities) || count(amenities[@ in $amenities]) == count($amenities)",
     )
     expect(query).toContain(
-      "!defined($q) || title match $q || code match $q || location.address match $q",
+      "!defined($q) || title match $q || code match $q || (location.showAddress == true && location.address match $q)",
     )
   })
 })
