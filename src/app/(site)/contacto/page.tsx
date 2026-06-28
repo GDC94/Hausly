@@ -55,7 +55,12 @@ export default function ContactPage() {
           </div>
 
           <Button asChild variant="outline" size="lg" className="h-11 w-full">
-            <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer">
+            <a
+              href={whatsappUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-wa-source="contact"
+            >
               <WhatsAppIcon className="size-4" />
               WhatsApp
             </a>

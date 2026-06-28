@@ -1,7 +1,13 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { getProperties, LoadMore, PropertyGrid } from "@/features/properties"
-import { getZones, parseOffset, parseSearchParams, SearchFilters } from "@/features/search"
+import {
+  getZones,
+  ListingTelemetry,
+  parseOffset,
+  parseSearchParams,
+  SearchFilters,
+} from "@/features/search"
 
 type RawSearchParams = Record<string, string | string[] | undefined>
 
@@ -44,9 +50,17 @@ export default async function PropertiesPage({
 
   const loaded = items.length
   const hasMore = loaded < total
+  // Filtros activos para la telemetría (raw de la URL, sin `offset`): el listado es
+  // un Server Component sin onClick, así que el evento se deriva del estado de la URL.
+  const activeFilters: Record<string, string> = {}
+  for (const [key, value] of Object.entries(sp)) {
+    if (key === "offset" || value === undefined) continue
+    activeFilters[key] = Array.isArray(value) ? value.join(",") : value
+  }
 
   return (
     <section className="mx-auto max-w-(--container-max) px-(--container-padding) py-10 lg:py-14">
+      <ListingTelemetry filters={activeFilters} offset={offset} />
       <header>
         <h1 className="text-heading text-foreground">Propiedades</h1>
         {/* `aria-live` anuncia los lotes nuevos del "Cargar más" sin recargar

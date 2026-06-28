@@ -7,6 +7,7 @@ import {
   buildContactMessage,
   buildPropertyListingJsonLd,
   buildPropertyMetadata,
+  buildPropertyViewedProps,
   buildSpecLine,
   getProperty,
   getPropertySlugs,
@@ -16,6 +17,7 @@ import {
   PropertyFeatures,
   PropertyGallery,
   PropertyLocation,
+  PropertyViewedTracker,
   resolveGalleryImages,
 } from "@/features/properties"
 import { getSiteUrl } from "@/shared/config/site"
@@ -57,6 +59,7 @@ export default async function PropertyDetailPage({ params }: { params: Params })
     <article className="mx-auto max-w-(--container-max) px-(--container-padding) py-6 lg:py-10">
       <JsonLd data={listingLd} />
       <JsonLd data={breadcrumbLd} />
+      <PropertyViewedTracker {...buildPropertyViewedProps(property)} />
 
       <nav aria-label="Migas de pan" className="mb-4 text-caption text-muted-foreground">
         <ol className="flex flex-wrap items-center gap-1.5">

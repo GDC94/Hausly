@@ -1,7 +1,10 @@
+import { Suspense } from "react"
 import { buildAgencyJsonLd, getAgency } from "@/features/agency"
 import { getZones } from "@/features/search"
+import { PageviewTracker, WhatsAppTelemetry } from "@/shared/analytics"
 import { getSiteUrl, SITE, SITE_NAME } from "@/shared/config/site"
 import { imageUrl } from "@/shared/sanity/image"
+import { ConsentBanner } from "@/shared/ui/consent-banner"
 import { JsonLd } from "@/shared/ui/json-ld"
 import { SiteFooter } from "@/shared/ui/site-footer"
 import { SiteHeader } from "@/shared/ui/site-header"
@@ -32,9 +35,15 @@ export default async function SiteLayout({ children }: Readonly<{ children: Reac
   return (
     <div className="flex min-h-screen flex-col">
       <JsonLd data={agencyLd} />
+      {/* `useSearchParams` del tracker exige Suspense o toda la página cae a CSR. */}
+      <Suspense fallback={null}>
+        <PageviewTracker />
+      </Suspense>
+      <WhatsAppTelemetry />
       <SiteHeader />
       <main className="flex-1">{children}</main>
       <SiteFooter />
+      <ConsentBanner />
     </div>
   )
 }

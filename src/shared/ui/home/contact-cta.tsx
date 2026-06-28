@@ -25,7 +25,7 @@ export function ContactCta() {
             variant="outline"
             className="h-11 border-background/30 bg-transparent text-background hover:bg-background/10 hover:text-background"
           >
-            <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer">
+            <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" data-wa-source="home">
               <WhatsAppIcon className="size-4" />
               WhatsApp
             </a>

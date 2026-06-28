@@ -1,7 +1,7 @@
 "use server"
 
 import { logNotifier } from "../infra/log-notifier"
-import { noopAnalytics } from "../infra/noop-analytics"
+import { posthogLeadAnalytics } from "../infra/posthog-lead-analytics"
 import { sanityLeadRepo } from "../infra/sanity-lead-repo"
 import { createLead } from "../lib/create-lead"
 import { leadSchema } from "../schemas/lead-schema"
@@ -20,7 +20,15 @@ export type LeadFormState = {
  * cablea los adapters reales y delega TODA la orquestación + invariante de orden
  * en el core `createLead`. El Resend real está diferido → `logNotifier` (tapón).
  */
-export async function submitLead(raw: unknown): Promise<LeadFormState> {
+export async function submitLead(
+  raw: unknown,
+  /**
+   * `distinct_id` de PostHog propagado por el cliente (specs/ANALYTICS.md §5): linkea
+   * el `lead_submitted` server-side al recorrido previo del visitante. Opcional —
+   * sin él (adblock total / sin opt-in) el lead se guarda igual, sólo sin linkear.
+   */
+  distinctId?: string | null,
+): Promise<LeadFormState> {
   const parsed = leadSchema.safeParse(raw)
   if (!parsed.success) {
     const fieldErrors: Record<string, string> = {}
@@ -37,7 +45,11 @@ export async function submitLead(raw: unknown): Promise<LeadFormState> {
     // ensuciar la atribución), así que se sobrescribe acá.
     await createLead(
       { ...parsed.data, source: "form" },
-      { repo: sanityLeadRepo, notifier: logNotifier, analytics: noopAnalytics },
+      {
+        repo: sanityLeadRepo,
+        notifier: logNotifier,
+        analytics: posthogLeadAnalytics(distinctId ?? null),
+      },
     )
     return {
       status: "success",
