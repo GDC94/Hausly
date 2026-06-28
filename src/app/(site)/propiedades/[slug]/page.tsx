@@ -4,16 +4,17 @@ import { notFound } from "next/navigation"
 import {
   buildBreadcrumbJsonLd,
   buildPropertyListingJsonLd,
-  type GalleryImage,
+  buildPropertyMetadata,
+  buildSpecLine,
   getProperty,
   getPropertySlugs,
   PropertyAmenities,
   PropertyContactCard,
   PropertyDescription,
-  type PropertyDetail,
   PropertyFeatures,
   PropertyGallery,
   PropertyLocation,
+  resolveGalleryImages,
 } from "@/features/properties"
 import { getSiteUrl } from "@/shared/config/site"
 import { imageUrl } from "@/shared/sanity/image"
@@ -32,25 +33,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params
   const property = await getProperty(slug)
-  if (!property) return {}
-
-  const og = property.mainImage?.asset
-    ? imageUrl(property.mainImage, { width: 1200, height: 630 })
-    : undefined
-
-  return {
-    title: property.title ?? "Propiedad",
-    description: truncate(property.descriptionPlain, 155),
-    alternates: { canonical: `/propiedades/${property.slug}` },
-    openGraph: {
-      type: "website",
-      title: property.title ?? undefined,
-      images: og ? [{ url: og, width: 1200, height: 630 }] : undefined,
-    },
-    twitter: { card: "summary_large_image" },
-    // No rankear lo que no se vende: solo `available` es indexable (specs/SEO.md §2).
-    robots: property.status === "available" ? undefined : { index: false, follow: true },
-  }
+  return property ? buildPropertyMetadata(property) : {}
 }
 
 export default async function PropertyDetailPage({ params }: { params: Params }) {
@@ -117,30 +100,4 @@ export default async function PropertyDetailPage({ params }: { params: Params })
       </div>
     </article>
   )
-}
-
-/** Resuelve main + galería a URLs servibles (cero `urlFor` en el cliente). */
-function resolveGalleryImages(property: PropertyDetail): GalleryImage[] {
-  const sources = [property.mainImage, ...(property.gallery ?? [])].filter(
-    (image): image is NonNullable<typeof image> => Boolean(image?.asset),
-  )
-  return sources.map((image) => ({
-    url: imageUrl(image, { width: 1600 }),
-    alt: image.alt ?? property.title ?? "Foto de la propiedad",
-    lqip: image.lqip ?? null,
-  }))
-}
-
-/** "3 amb · 2 baños · 85 m²" — omite ausentes (mismo criterio que la card, §4). */
-function buildSpecLine({ rooms, bathrooms, coveredArea }: PropertyDetail): string {
-  const parts: string[] = []
-  if (rooms) parts.push(`${rooms} amb`)
-  if (bathrooms) parts.push(`${bathrooms} ${bathrooms === 1 ? "baño" : "baños"}`)
-  if (coveredArea) parts.push(`${coveredArea} m²`)
-  return parts.join(" · ")
-}
-
-function truncate(text: string, max: number): string {
-  if (text.length <= max) return text
-  return `${text.slice(0, max - 1).trimEnd()}…`
 }

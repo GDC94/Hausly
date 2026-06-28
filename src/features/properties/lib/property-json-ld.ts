@@ -162,7 +162,10 @@ export function buildBreadcrumbJsonLd(
 
   const zone = property.location?.zone
   if (zone?.name && zone.slug) {
-    crumbs.push({ name: zone.name, item: `${siteUrl}/propiedades/zona/${zone.slug}` })
+    // Apunta al listado filtrado por zona (URL que YA existe) en vez de la landing
+    // /propiedades/zona/[slug] (issue #10, aún sin ruta): un breadcrumb hacia un
+    // 404 invalida el JSON-LD. Cuando exista la landing, se cambia acá.
+    crumbs.push({ name: zone.name, item: `${siteUrl}/propiedades?zone=${zone.slug}` })
   }
 
   crumbs.push({

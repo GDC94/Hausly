@@ -10,8 +10,16 @@ import type { PropertyDetail } from "../types"
 const components: PortableTextComponents = {
   block: {
     normal: ({ children }) => <p className="text-body text-muted-foreground">{children}</p>,
+    // La página ya tiene el <h1> (título) y el <h2> de sección ("Descripción"),
+    // así que TODO heading del editor entra debajo como h3/h4 — nunca un segundo
+    // <h1> ni el default de Portable Text (rompería el outline y los tokens). Se
+    // cubren los 6 niveles que el schema permite.
+    h1: ({ children }) => <h3 className="text-subheading text-foreground">{children}</h3>,
     h2: ({ children }) => <h3 className="text-subheading text-foreground">{children}</h3>,
     h3: ({ children }) => <h4 className="text-body font-semibold text-foreground">{children}</h4>,
+    h4: ({ children }) => <h4 className="text-body font-semibold text-foreground">{children}</h4>,
+    h5: ({ children }) => <h4 className="text-body font-semibold text-foreground">{children}</h4>,
+    h6: ({ children }) => <h4 className="text-body font-semibold text-foreground">{children}</h4>,
     blockquote: ({ children }) => (
       <blockquote className="rounded-lg bg-muted/40 px-4 py-3 text-body text-muted-foreground italic">
         {children}

@@ -156,7 +156,7 @@ describe("buildBreadcrumbJsonLd", () => {
     ])
     expect(items[0].item).toBe(`${SITE}/`)
     expect(items[1].item).toBe(`${SITE}/propiedades`)
-    expect(items[2].item).toBe(`${SITE}/propiedades/zona/palermo`)
+    expect(items[2].item).toBe(`${SITE}/propiedades?zone=palermo`)
     expect(items.map((i) => i.position)).toEqual([1, 2, 3, 4])
   })
 

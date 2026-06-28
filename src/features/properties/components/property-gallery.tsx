@@ -155,7 +155,7 @@ function NavButton({ side, onClick }: { side: "left" | "right"; onClick: () => v
       type="button"
       onClick={onClick}
       aria-label={side === "left" ? "Foto anterior" : "Foto siguiente"}
-      className={`absolute z-10 inline-flex size-11 items-center justify-center rounded-full bg-background/90 text-foreground shadow-md transition-colors hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background ${
+      className={`absolute z-10 inline-flex size-11 items-center justify-center rounded-full bg-background/90 text-foreground shadow-md transition-colors hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-foreground ${
         side === "left" ? "left-2" : "right-2"
       }`}
     >
