@@ -1,6 +1,7 @@
 import { sanityFetch } from "@/shared/sanity/client"
 import type { PropertiesQueryResult } from "@/shared/sanity/sanity.types"
 import type { PropertyFilters } from "@/shared/types"
+import { PAGE_SIZE } from "../lib/pagination"
 import { buildPropertiesQuery } from "./build-properties-query"
 
 /**
@@ -13,10 +14,20 @@ import { buildPropertiesQuery } from "./build-properties-query"
  * (specs/ARCHITECTURE.md §4).
  *
  * Sin filtros (objeto vacío) todos los params viajan como `null` y la query
- * devuelve el listado completo — el comportamiento del issue #5.
+ * devuelve el listado completo (acotado por el slice) — el comportamiento del
+ * issue #5.
+ *
+ * Paginación "Cargar más" (issue #8, specs/FILTERS.md §4/§5): `offset` (de la URL
+ * crawleable `?offset=`) define el límite del lote acumulado `end = offset +
+ * PAGE_SIZE`. La query devuelve `{ items, total }`: `items` es el lote
+ * `[0...$end]`, `total` el conteo del set completo. La página compara
+ * `items.length < total` para decidir si mostrar el botón.
  */
-export async function getProperties(filters: PropertyFilters = {}): Promise<PropertiesQueryResult> {
-  const { query, params } = buildPropertiesQuery(filters)
+export async function getProperties(
+  filters: PropertyFilters = {},
+  offset = 0,
+): Promise<PropertiesQueryResult> {
+  const { query, params } = buildPropertiesQuery(filters, offset + PAGE_SIZE)
 
   // Tag `zone` además de `property`: la card renderiza `location.zone->name` y se
   // filtra por `location.zone->slug`, así que renombrar/mover una zona también

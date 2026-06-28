@@ -77,12 +77,22 @@ const reserved: Doc = {
 
 const dataset: Doc[] = [dual, cheapUsdSale, arsRent, reserved]
 
-async function matchedIds(filters: PropertyFilters): Promise<string[]> {
-  const { query, params } = buildPropertiesQuery(filters)
+type PageResult = { items: Array<{ _id: string }>; total: number }
+
+// `end` alto: el slice no recorta nada, así estos tests miden SOLO el predicado
+// de filtrado (los de paginación viven en su propio bloque, más abajo).
+const NO_SLICE = 100
+
+async function runQuery(filters: PropertyFilters, end = NO_SLICE): Promise<PageResult> {
+  const { query, params } = buildPropertiesQuery(filters, end)
   const tree = parse(query, { params })
   const value = await evaluate(tree, { dataset, params })
-  const rows = (await value.get()) as Array<{ _id: string }>
-  return rows.map((row) => row._id).sort()
+  return (await value.get()) as PageResult
+}
+
+async function matchedIds(filters: PropertyFilters): Promise<string[]> {
+  const { items } = await runQuery(filters)
+  return items.map((row) => row._id).sort()
 }
 
 describe("buildPropertiesQuery · operations[] sub-filter (groq-js, real evaluation)", () => {
@@ -125,5 +135,41 @@ describe("buildPropertiesQuery · operations[] sub-filter (groq-js, real evaluat
     expect(await matchedIds({ operation: "sale", currency: "USD", priceMin: 200000 })).toEqual([
       "dual",
     ])
+  })
+})
+
+describe("buildPropertiesQuery · paginación 'Cargar más' (groq-js, real evaluation)", () => {
+  it("el slice [0...$end] recorta los items pero el total cuenta el set completo", async () => {
+    // 3 disponibles; pido un lote de 1 → 1 item, pero el total sigue siendo 3.
+    const { items, total } = await runQuery({}, 1)
+    expect(items).toHaveLength(1)
+    expect(total).toBe(3)
+  })
+
+  it("un end mayor trae más items sin cambiar el total", async () => {
+    const { items, total } = await runQuery({}, 2)
+    expect(items).toHaveLength(2)
+    expect(total).toBe(3)
+  })
+
+  it("el lote respeta el orden newest-first (order(_createdAt desc) antes del slice)", async () => {
+    const { items } = await runQuery({}, 1)
+    expect(items[0]._id).toBe("dual") // _createdAt 2026-01-03, el más nuevo
+  })
+
+  it("el total refleja el filtro, no el dataset entero", async () => {
+    // Sólo las USD: cheap-usd + dual = 2. El slice no toca ese conteo.
+    const { total } = await runQuery({ currency: "USD" }, 1)
+    expect(total).toBe(2)
+  })
+
+  it("sin resultados: items vacío y total 0 (estado vacío de la página)", async () => {
+    // Filtro que no matchea nada → la página muestra el empty state y NO el botón.
+    const { items, total } = await runQuery(
+      { operation: "sale", currency: "USD", priceMin: 999_999_999 },
+      24,
+    )
+    expect(items).toHaveLength(0)
+    expect(total).toBe(0)
   })
 })

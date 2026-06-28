@@ -17,6 +17,16 @@ import type { PropertyFilters } from "@/shared/types"
  * mínima de `PropertyCard` (`PropertyCardData`) — misma que el listado sin
  * filtros (issue #5), así card y query comparten una sola fuente de verdad.
  *
+ * **Paginación "Cargar más" (specs/FILTERS.md §4/§5).** La query devuelve un
+ * objeto `{ items, total }` en un solo fetch: `items` es el lote **acumulado**
+ * `[0...$end]` ordenado newest-first; `total` es el `count()` del MISMO set sin
+ * slice. La página compara `items.length < total` para decidir si mostrar el
+ * botón, sin un segundo round-trip. Es slice acumulado `[0...$end]` (no
+ * `[$offset...$end]`): cada lote re-trae lo anterior + el nuevo, así el listado
+ * funciona sin JS (la URL crawleable `?offset=` acumula sola) y el footer queda
+ * siempre alcanzable. El predicado de filtrado se repite en `items` y en `total`
+ * — son el mismo set, deben quedar sincronizados.
+ *
  * **Sub-filtro `operations[]` (la parte crítica, specs/FILTERS.md §2).** Una
  * propiedad puede tener venta-USD Y alquiler-ARS simultáneos y NO hay conversión
  * (Non-Goal). Por eso operación + moneda + precio se evalúan DENTRO de un único
@@ -25,37 +35,58 @@ import type { PropertyFilters } from "@/shared/types"
  * cuya venta-USD es carísima sólo porque tiene aparte un alquiler-ARS barato.
  */
 export const propertiesQuery = defineQuery(`
-  *[_type == "property"
-    && status == "available"
-    && (!defined($types) || propertyType in $types)
-    && (!defined($zones) || location.zone->slug.current in $zones)
-    && (!defined($rooms) || rooms >= $rooms)
-    && (!defined($bathrooms) || bathrooms >= $bathrooms)
-    && (!defined($areaMin) || coveredArea >= $areaMin)
-    && (!defined($areaMax) || coveredArea <= $areaMax)
-    && (!defined($parking) || parkingSpaces >= $parking)
-    && (!defined($conditions) || condition in $conditions)
-    && (!defined($amenities) || count(amenities[@ in $amenities]) == count($amenities))
-    && (!defined($q) || title match $q || code match $q || (location.showAddress == true && location.address match $q))
-    && count(operations[
-      (!defined($operation) || type == $operation) &&
-      (!defined($currency) || price.currency == $currency) &&
-      (!defined($priceMin) || price.amount >= $priceMin) &&
-      (!defined($priceMax) || price.amount <= $priceMax)
-    ]) > 0
-  ] | order(_createdAt desc) {
-    _id,
-    title,
-    "slug": slug.current,
-    rooms,
-    bathrooms,
-    coveredArea,
-    "zone": location.zone->name,
-    operations[]{ type, price },
-    mainImage {
-      ...,
-      "lqip": asset->metadata.lqip
-    }
+  {
+    "items": *[_type == "property"
+      && status == "available"
+      && (!defined($types) || propertyType in $types)
+      && (!defined($zones) || location.zone->slug.current in $zones)
+      && (!defined($rooms) || rooms >= $rooms)
+      && (!defined($bathrooms) || bathrooms >= $bathrooms)
+      && (!defined($areaMin) || coveredArea >= $areaMin)
+      && (!defined($areaMax) || coveredArea <= $areaMax)
+      && (!defined($parking) || parkingSpaces >= $parking)
+      && (!defined($conditions) || condition in $conditions)
+      && (!defined($amenities) || count(amenities[@ in $amenities]) == count($amenities))
+      && (!defined($q) || title match $q || code match $q || (location.showAddress == true && location.address match $q))
+      && count(operations[
+        (!defined($operation) || type == $operation) &&
+        (!defined($currency) || price.currency == $currency) &&
+        (!defined($priceMin) || price.amount >= $priceMin) &&
+        (!defined($priceMax) || price.amount <= $priceMax)
+      ]) > 0
+    ] | order(_createdAt desc) [0...$end] {
+      _id,
+      title,
+      "slug": slug.current,
+      rooms,
+      bathrooms,
+      coveredArea,
+      "zone": location.zone->name,
+      operations[]{ type, price },
+      mainImage {
+        ...,
+        "lqip": asset->metadata.lqip
+      }
+    },
+    "total": count(*[_type == "property"
+      && status == "available"
+      && (!defined($types) || propertyType in $types)
+      && (!defined($zones) || location.zone->slug.current in $zones)
+      && (!defined($rooms) || rooms >= $rooms)
+      && (!defined($bathrooms) || bathrooms >= $bathrooms)
+      && (!defined($areaMin) || coveredArea >= $areaMin)
+      && (!defined($areaMax) || coveredArea <= $areaMax)
+      && (!defined($parking) || parkingSpaces >= $parking)
+      && (!defined($conditions) || condition in $conditions)
+      && (!defined($amenities) || count(amenities[@ in $amenities]) == count($amenities))
+      && (!defined($q) || title match $q || code match $q || (location.showAddress == true && location.address match $q))
+      && count(operations[
+        (!defined($operation) || type == $operation) &&
+        (!defined($currency) || price.currency == $currency) &&
+        (!defined($priceMin) || price.amount >= $priceMin) &&
+        (!defined($priceMax) || price.amount <= $priceMax)
+      ]) > 0
+    ])
   }
 `)
 
@@ -80,6 +111,8 @@ export type PropertiesQueryParams = {
   currency: string | null
   priceMin: number | null
   priceMax: number | null
+  /** Límite superior del slice acumulado `[0...$end]` ("Cargar más"). */
+  end: number
 }
 
 /**
@@ -96,7 +129,10 @@ export type PropertiesQueryParams = {
  * specs/SANITY-SCHEMA.md §4) NO puede usarse como oráculo: buscar un token de
  * dirección no debe revelar por descarte una propiedad de dirección oculta.
  */
-export function buildPropertiesQuery(filters: PropertyFilters): {
+export function buildPropertiesQuery(
+  filters: PropertyFilters,
+  end: number,
+): {
   query: typeof propertiesQuery
   params: PropertiesQueryParams
 } {
@@ -117,6 +153,7 @@ export function buildPropertiesQuery(filters: PropertyFilters): {
       currency: filters.currency ?? null,
       priceMin: filters.priceMin ?? null,
       priceMax: filters.priceMax ?? null,
+      end,
     },
   }
 }

@@ -326,29 +326,32 @@ export type AllSanitySchemaTypes =
 
 // Source: src/features/properties/queries/build-properties-query.ts
 // Variable: propertiesQuery
-// Query: *[_type == "property"    && status == "available"    && (!defined($types) || propertyType in $types)    && (!defined($zones) || location.zone->slug.current in $zones)    && (!defined($rooms) || rooms >= $rooms)    && (!defined($bathrooms) || bathrooms >= $bathrooms)    && (!defined($areaMin) || coveredArea >= $areaMin)    && (!defined($areaMax) || coveredArea <= $areaMax)    && (!defined($parking) || parkingSpaces >= $parking)    && (!defined($conditions) || condition in $conditions)    && (!defined($amenities) || count(amenities[@ in $amenities]) == count($amenities))    && (!defined($q) || title match $q || code match $q || (location.showAddress == true && location.address match $q))    && count(operations[      (!defined($operation) || type == $operation) &&      (!defined($currency) || price.currency == $currency) &&      (!defined($priceMin) || price.amount >= $priceMin) &&      (!defined($priceMax) || price.amount <= $priceMax)    ]) > 0  ] | order(_createdAt desc) {    _id,    title,    "slug": slug.current,    rooms,    bathrooms,    coveredArea,    "zone": location.zone->name,    operations[]{ type, price },    mainImage {      ...,      "lqip": asset->metadata.lqip    }  }
-export type PropertiesQueryResult = Array<{
-  _id: string
-  title: string | null
-  slug: string | null
-  rooms: number | null
-  bathrooms: number | null
-  coveredArea: number | null
-  zone: string | null
-  operations: Array<{
-    type: "rent" | "sale" | "temporaryRent" | null
-    price: Price | null
-  }> | null
-  mainImage: {
-    asset?: SanityImageAssetReference
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    alt?: string
-    _type: "image"
-    lqip: string | null
-  } | null
-}>
+// Query: {    "items": *[_type == "property"      && status == "available"      && (!defined($types) || propertyType in $types)      && (!defined($zones) || location.zone->slug.current in $zones)      && (!defined($rooms) || rooms >= $rooms)      && (!defined($bathrooms) || bathrooms >= $bathrooms)      && (!defined($areaMin) || coveredArea >= $areaMin)      && (!defined($areaMax) || coveredArea <= $areaMax)      && (!defined($parking) || parkingSpaces >= $parking)      && (!defined($conditions) || condition in $conditions)      && (!defined($amenities) || count(amenities[@ in $amenities]) == count($amenities))      && (!defined($q) || title match $q || code match $q || (location.showAddress == true && location.address match $q))      && count(operations[        (!defined($operation) || type == $operation) &&        (!defined($currency) || price.currency == $currency) &&        (!defined($priceMin) || price.amount >= $priceMin) &&        (!defined($priceMax) || price.amount <= $priceMax)      ]) > 0    ] | order(_createdAt desc) [0...$end] {      _id,      title,      "slug": slug.current,      rooms,      bathrooms,      coveredArea,      "zone": location.zone->name,      operations[]{ type, price },      mainImage {        ...,        "lqip": asset->metadata.lqip      }    },    "total": count(*[_type == "property"      && status == "available"      && (!defined($types) || propertyType in $types)      && (!defined($zones) || location.zone->slug.current in $zones)      && (!defined($rooms) || rooms >= $rooms)      && (!defined($bathrooms) || bathrooms >= $bathrooms)      && (!defined($areaMin) || coveredArea >= $areaMin)      && (!defined($areaMax) || coveredArea <= $areaMax)      && (!defined($parking) || parkingSpaces >= $parking)      && (!defined($conditions) || condition in $conditions)      && (!defined($amenities) || count(amenities[@ in $amenities]) == count($amenities))      && (!defined($q) || title match $q || code match $q || (location.showAddress == true && location.address match $q))      && count(operations[        (!defined($operation) || type == $operation) &&        (!defined($currency) || price.currency == $currency) &&        (!defined($priceMin) || price.amount >= $priceMin) &&        (!defined($priceMax) || price.amount <= $priceMax)      ]) > 0    ])  }
+export type PropertiesQueryResult = {
+  items: Array<{
+    _id: string
+    title: string | null
+    slug: string | null
+    rooms: number | null
+    bathrooms: number | null
+    coveredArea: number | null
+    zone: string | null
+    operations: Array<{
+      type: "rent" | "sale" | "temporaryRent" | null
+      price: Price | null
+    }> | null
+    mainImage: {
+      asset?: SanityImageAssetReference
+      media?: unknown
+      hotspot?: SanityImageHotspot
+      crop?: SanityImageCrop
+      alt?: string
+      _type: "image"
+      lqip: string | null
+    } | null
+  }>
+  total: number
+}
 
 // Source: src/features/search/queries/get-zones.ts
 // Variable: zonesQuery
