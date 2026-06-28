@@ -56,20 +56,26 @@ export function parseSearchParams(raw: RawSearchParams): PropertyFilters {
   const q = text(raw.q)
   if (q !== undefined) filters.q = q
 
-  // --- Embudo precio/operación/moneda (specs/FILTERS.md §2) ---
+  // --- Embudo precio/operación/moneda (specs/FILTERS.md §2, §5) ---
+  // Cadena ESTRICTA: operación ⊃ moneda ⊃ precio. Cada eslabón requiere el
+  // anterior. Así el contrato de la URL coincide con el revelado de la UI
+  // (`PriceFunnel`): sin operación la UI no muestra moneda ni precio, y el parse
+  // tampoco los acepta — nada de filtros activos pero invisibles.
   const operation = enumValue(raw.operation, OPERATION_TYPES)
-  if (operation) filters.operation = operation
+  if (operation) {
+    filters.operation = operation
 
-  const currency = enumValue(raw.currency, CURRENCIES)
-  if (currency) {
-    filters.currency = currency
-    // El rango de precio SÓLO tiene sentido con una moneda: no hay conversión
-    // USD↔ARS (Non-Goal), así que sin `currency` el rango se descarta entero.
-    const priceMin = minNumber(raw.priceMin)
-    if (priceMin !== undefined) filters.priceMin = priceMin
+    const currency = enumValue(raw.currency, CURRENCIES)
+    if (currency) {
+      filters.currency = currency
+      // El rango de precio SÓLO tiene sentido con una moneda: no hay conversión
+      // USD↔ARS (Non-Goal), así que sin `currency` el rango se descarta entero.
+      const priceMin = minNumber(raw.priceMin)
+      if (priceMin !== undefined) filters.priceMin = priceMin
 
-    const priceMax = minNumber(raw.priceMax)
-    if (priceMax !== undefined) filters.priceMax = priceMax
+      const priceMax = minNumber(raw.priceMax)
+      if (priceMax !== undefined) filters.priceMax = priceMax
+    }
   }
 
   return filters
