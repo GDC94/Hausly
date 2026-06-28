@@ -162,10 +162,10 @@ export function buildBreadcrumbJsonLd(
 
   const zone = property.location?.zone
   if (zone?.name && zone.slug) {
-    // Apunta al listado filtrado por zona (URL que YA existe) en vez de la landing
-    // /propiedades/zona/[slug] (issue #10, aún sin ruta): un breadcrumb hacia un
-    // 404 invalida el JSON-LD. Cuando exista la landing, se cambia acá.
-    crumbs.push({ name: zone.name, item: `${siteUrl}/propiedades?zone=${zone.slug}` })
+    // Landing por zona (issue #10, URL real e indexable, specs/SEO.md §7): el
+    // breadcrumb apunta a la página propia /propiedades/zona/[slug], no al
+    // listado filtrado por querystring (que es `noindex`).
+    crumbs.push({ name: zone.name, item: `${siteUrl}/propiedades/zona/${zone.slug}` })
   }
 
   crumbs.push({
