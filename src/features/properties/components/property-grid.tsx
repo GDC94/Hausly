@@ -5,8 +5,18 @@ import { PropertyCard } from "./property-card"
  * Grid editorial responsive (specs/LAYOUT.md §9): 1 col mobile → 2 col `md` →
  * 3 col `lg`. Las primeras cards llevan `priority` (above-the-fold → LCP).
  * Si no hay resultados, muestra un empty state — la página siempre renderiza.
+ *
+ * `priority` (default `true`): el listado/zona ponen el grid above-the-fold y
+ * priorizan las 3 primeras imágenes. La home lo pasa `false` (grid below-fold,
+ * bajo el hero): preload eager ahí competiría con el above-the-fold (CWV).
  */
-export function PropertyGrid({ properties }: { properties: PropertyCardData[] }) {
+export function PropertyGrid({
+  properties,
+  priority = true,
+}: {
+  properties: PropertyCardData[]
+  priority?: boolean
+}) {
   if (properties.length === 0) {
     return <PropertyGridEmpty />
   }
@@ -15,7 +25,7 @@ export function PropertyGrid({ properties }: { properties: PropertyCardData[] })
     <ul className="grid grid-cols-1 gap-x-6 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
       {properties.map((property, index) => (
         <li key={property._id}>
-          <PropertyCard property={property} priority={index < 3} />
+          <PropertyCard property={property} priority={priority && index < 3} />
         </li>
       ))}
     </ul>
