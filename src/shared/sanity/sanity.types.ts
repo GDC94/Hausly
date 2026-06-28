@@ -354,6 +354,32 @@ export type PropertiesQueryResult = {
   total: number
 }
 
+// Source: src/features/properties/queries/get-featured-properties.ts
+// Variable: featuredPropertiesQuery
+// Query: *[_type == "property" && status == "available" && featured == true]    | order(_createdAt desc) [0...6] {    _id,    title,    "slug": slug.current,    rooms,    bathrooms,    coveredArea,    "zone": location.zone->name,    operations[]{ type, price },    mainImage {      ...,      "lqip": asset->metadata.lqip    }  }
+export type FeaturedPropertiesQueryResult = Array<{
+  _id: string
+  title: string | null
+  slug: string | null
+  rooms: number | null
+  bathrooms: number | null
+  coveredArea: number | null
+  zone: string | null
+  operations: Array<{
+    type: "rent" | "sale" | "temporaryRent" | null
+    price: Price | null
+  }> | null
+  mainImage: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    _type: "image"
+    lqip: string | null
+  } | null
+}>
+
 // Source: src/features/properties/queries/get-property.ts
 // Variable: propertyQuery
 // Query: *[_type == "property" && slug.current == $slug][0] {    _id,    _createdAt,    _updatedAt,    title,    code,    "slug": slug.current,    propertyType,    status,    operations[]{ type, price },    description,    "descriptionPlain": pt::text(description),    location {      address,      showAddress,      geopoint,      "zone": zone->{ name, "slug": slug.current }    },    bedrooms,    bathrooms,    rooms,    coveredArea,    totalArea,    parkingSpaces,    age,    condition,    maintenanceFee,    amenities,    mainImage {      ...,      "lqip": asset->metadata.lqip    },    gallery[] {      ...,      "lqip": asset->metadata.lqip    }  }

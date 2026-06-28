@@ -1,5 +1,7 @@
 // API pública del feature `properties`. `app/` y otros consumidores importan
 // SOLO desde acá, nunca de subcarpetas internas (regla AGENTS.md).
+
+export { FeaturedProperties } from "./components/featured-properties"
 export { LoadMore } from "./components/load-more"
 export { PropertyAmenities } from "./components/property-amenities"
 export { PropertyCard } from "./components/property-card"
@@ -21,6 +23,7 @@ export {
   buildZoneMetadata,
   zoneHeading,
 } from "./lib/zone-landing-view"
+export { FEATURED_LIMIT, getFeaturedProperties } from "./queries/get-featured-properties"
 export { getProperties } from "./queries/get-properties"
 export { getProperty, getPropertySlugs } from "./queries/get-property"
 export type { PropertyCardData, PropertyDetail } from "./types"
