@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next"
-import { getPropertiesForSitemap } from "@/features/properties/queries/get-property"
-import { getZones } from "@/features/search/queries/get-zones"
+import { getPropertiesForSitemap } from "@/features/properties"
+import { getZones } from "@/features/search"
 import { getSiteUrl } from "@/shared/config/site"
 import { buildSitemap } from "@/shared/seo/build-sitemap"
 

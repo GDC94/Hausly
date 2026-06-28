@@ -30,7 +30,9 @@ export function buildSitemap({ siteUrl, properties, zones }: SitemapInput): Meta
       Boolean(property.slug),
     )
     .map((property) => ({
-      url: `${siteUrl}/propiedades/${property.slug}`,
+      // encode defensivo: un slug editado a mano con un carácter reservado (espacio,
+      // `#`) rompería la URL del XML. No-op para los slugs normales de Sanity.
+      url: `${siteUrl}/propiedades/${encodeURIComponent(property.slug)}`,
       lastModified: property._updatedAt ?? undefined,
       changeFrequency: "weekly",
       priority: 0.8,
@@ -39,7 +41,7 @@ export function buildSitemap({ siteUrl, properties, zones }: SitemapInput): Meta
   const zoneRoutes: MetadataRoute.Sitemap = zones
     .filter((zone): zone is { slug: string } => Boolean(zone.slug))
     .map((zone) => ({
-      url: `${siteUrl}/propiedades/zona/${zone.slug}`,
+      url: `${siteUrl}/propiedades/zona/${encodeURIComponent(zone.slug)}`,
       changeFrequency: "daily",
       priority: 0.7,
     }))

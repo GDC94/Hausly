@@ -1,6 +1,5 @@
-import { buildAgencyJsonLd } from "@/features/agency/lib/agency-json-ld"
-import { getAgency } from "@/features/agency/queries/get-agency"
-import { getZones } from "@/features/search/queries/get-zones"
+import { buildAgencyJsonLd, getAgency } from "@/features/agency"
+import { getZones } from "@/features/search"
 import { getSiteUrl, SITE, SITE_NAME } from "@/shared/config/site"
 import { imageUrl } from "@/shared/sanity/image"
 import { JsonLd } from "@/shared/ui/json-ld"

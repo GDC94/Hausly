@@ -43,6 +43,17 @@ describe("buildSitemap", () => {
     }
   })
 
+  it("encodes reserved characters in slugs", () => {
+    const out = buildSitemap({
+      siteUrl: SITE,
+      properties: [{ slug: "lote 5#a", _updatedAt: null }],
+      zones: [{ slug: "san isidro" }],
+    })
+    const out_urls = out.map((e) => e.url)
+    expect(out_urls).toContain(`${SITE}/propiedades/lote%205%23a`)
+    expect(out_urls).toContain(`${SITE}/propiedades/zona/san%20isidro`)
+  })
+
   it("survives empty content with just the static routes", () => {
     const empty = buildSitemap({ siteUrl: SITE, properties: [], zones: [] })
     expect(empty.map((e) => e.url)).toEqual([SITE, `${SITE}/propiedades`, `${SITE}/contacto`])

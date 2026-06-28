@@ -45,6 +45,27 @@ describe("buildAgencyJsonLd", () => {
     expect(ld.sameAs).toEqual(["https://instagram.com/real"])
   })
 
+  it("omits blank NAP fields instead of leaking placeholders when the singleton exists", () => {
+    // Singleton real cargado con sólo `name` (único campo requerido): NO debe
+    // publicar el teléfono/email/dirección placeholder de site.ts.
+    const ld = buildAgencyJsonLd(
+      {
+        name: "Inmobiliaria Real",
+        phone: null,
+        email: null,
+        address: null,
+        logo: null,
+        socials: null,
+      },
+      baseOpts,
+    )
+    expect(ld.name).toBe("Inmobiliaria Real")
+    expect(ld.telephone).toBeUndefined()
+    expect(ld.email).toBeUndefined()
+    expect(ld.address).toBeUndefined()
+    expect(ld.sameAs).toBeUndefined()
+  })
+
   it("falls back to site config when the agency singleton is missing", () => {
     const ld = buildAgencyJsonLd(null, baseOpts)
     expect(ld.name).toBe("Hausly")

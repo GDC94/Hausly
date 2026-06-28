@@ -48,16 +48,21 @@ export function buildAgencyJsonLd(
   agency: AgencyData,
   { siteUrl, zones, fallback, imageUrl }: AgencyJsonLdOptions,
 ): WithContext<Exclude<RealEstateAgent, string>> {
+  // Coalesce a NIVEL SINGLETON, no por-campo: si el documento `agency` existe, TODO
+  // el NAP sale de él y los campos en blanco se OMITEN (el schema sólo exige
+  // `name`). El fallback de site.ts se usa únicamente cuando el singleton no existe
+  // todavía. Así nunca se publica un teléfono/email/dirección placeholder junto a
+  // una inmobiliaria real (datos falsos en el dato estructurado).
+  const present = agency != null
   const name = agency?.name ?? fallback.name
-  const telephone = agency?.phone ?? fallback.phone
-  const email = agency?.email ?? fallback.email
-  const address = agency?.address ?? fallback.address
+  const telephone = present ? (agency?.phone ?? undefined) : fallback.phone
+  const email = present ? (agency?.email ?? undefined) : fallback.email
+  const address = present ? (agency?.address ?? undefined) : fallback.address
 
-  // Coalesce por-bloque (no por-campo): si el singleton trae `socials`, son SUS
-  // redes; mezclar un Instagram real con un Facebook placeholder sería un dato
-  // falso. Sólo se cae al fallback completo si el singleton no define socials.
-  const socials = agency?.socials ?? fallback.socials
-  const sameAs = [socials.instagram, socials.facebook].filter((url): url is string => Boolean(url))
+  const socials = present ? agency?.socials : fallback.socials
+  const sameAs = [socials?.instagram, socials?.facebook].filter((url): url is string =>
+    Boolean(url),
+  )
 
   const logo = agency?.logo ? imageUrl(agency.logo) : undefined
 
@@ -77,11 +82,9 @@ export function buildAgencyJsonLd(
     image: logo,
     telephone,
     email,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: address,
-      addressCountry: "AR",
-    },
+    address: address
+      ? { "@type": "PostalAddress", streetAddress: address, addressCountry: "AR" }
+      : undefined,
     areaServed: areaServed.length > 0 ? areaServed : undefined,
     sameAs: sameAs.length > 0 ? sameAs : undefined,
   }

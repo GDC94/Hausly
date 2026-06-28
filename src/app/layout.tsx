@@ -16,11 +16,14 @@ export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: { default: SITE_NAME, template: `%s | ${SITE_NAME}` },
   description: DESCRIPTION,
+  // Sin `url` global: Next hace shallow-merge de `openGraph`, así que un `url` acá
+  // se le colaría como `og:url` a las rutas que no definen el suyo (/contacto,
+  // /propiedades) apuntando al home. El `og:url` correcto sale del `canonical` por
+  // ruta (`alternates.canonical`).
   openGraph: {
     type: "website",
     locale: "es_AR",
     siteName: SITE_NAME,
-    url: "/",
   },
   twitter: { card: "summary_large_image" },
   robots: { index: true, follow: true },
