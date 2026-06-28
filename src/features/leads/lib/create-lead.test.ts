@@ -72,4 +72,16 @@ describe("createLead", () => {
     expect(result.id).toBe("lead-1")
     expect(result.notified).toBe(true)
   })
+
+  it("linkea el evento con el leadId (puente a Sanity, NUNCA el email — specs/ANALYTICS.md §5)", async () => {
+    const { repo, notifier, analytics } = fakes()
+    await createLead(input, { repo, notifier, analytics })
+    expect(analytics.track).toHaveBeenCalledWith(
+      "lead_submitted",
+      expect.objectContaining({ leadId: "lead-1" }),
+    )
+    // El email del lead JAMÁS viaja al evento: la PII vive en Sanity, no en PostHog.
+    const [, props] = (analytics.track as ReturnType<typeof vi.fn>).mock.calls[0]
+    expect(JSON.stringify(props)).not.toContain("ana@mail.com")
+  })
 })

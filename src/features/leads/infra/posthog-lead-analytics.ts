@@ -15,7 +15,20 @@ import type { LeadAnalytics } from "../lib/ports"
 export function posthogLeadAnalytics(distinctId: string | null): LeadAnalytics {
   return {
     async track(_event, props) {
-      await captureServer({ distinctId, event: LEAD_SUBMITTED, properties: props })
+      // Traduce el `leadId` de dominio a propiedades de PERSONA de PostHog (`$set`):
+      // marca al visitante anónimo como convertido y guarda el ref al lead. Así el
+      // recorrido previo (mismo `distinct_id`) queda atado a la conversión, y el
+      // `leadId` es el puente a la PII en Sanity (specs/ANALYTICS.md §5). Sigue sin
+      // PII en PostHog: `leadId` es un ref, no un dato personal.
+      const leadId = props.leadId
+      await captureServer({
+        distinctId,
+        event: LEAD_SUBMITTED,
+        properties: {
+          ...props,
+          $set: { converted: true, last_lead_id: leadId },
+        },
+      })
     },
   }
 }
