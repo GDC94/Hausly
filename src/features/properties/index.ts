@@ -21,6 +21,7 @@ export {
   buildZoneMetadata,
   zoneHeading,
 } from "./lib/zone-landing-view"
+export { FEATURED_LIMIT, getFeaturedProperties } from "./queries/get-featured-properties"
 export { getProperties } from "./queries/get-properties"
 export { getProperty, getPropertySlugs } from "./queries/get-property"
 export type { PropertyCardData, PropertyDetail } from "./types"
