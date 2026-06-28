@@ -1,23 +1,31 @@
-import { LeadForm } from "@/features/leads"
+import type { ReactNode } from "react"
 import { whatsappUrl } from "@/shared/config/site"
 import { formatPrice } from "@/shared/lib/format-price"
 import { OPERATION_LABELS } from "@/shared/lib/labels"
 import { Button } from "@/shared/ui/button"
 import { WhatsAppIcon } from "@/shared/ui/icons"
+import { buildContactMessage } from "../lib/property-detail-view"
 import type { PropertyDetail } from "../types"
 
 /**
  * Card de contacto sticky (patrón Airbnb "booking card", specs/LAYOUT.md §7),
  * pero para **captar lead**. Muestra el precio DUAL (una fila por operación, cada
- * una en su moneda — sin conversión, Non-Goal) + CTAs de consulta y WhatsApp.
+ * una en su moneda — sin conversión, Non-Goal) + WhatsApp.
+ *
+ * El formulario de consulta (feature `leads`) llega como `children`: la PÁGINA lo
+ * compone (`app/` puede importar varios features), así `properties` no importa de
+ * `leads` y se respeta el límite entre features (specs/ARCHITECTURE.md §3).
  */
-export function PropertyContactCard({ property }: { property: PropertyDetail }) {
+export function PropertyContactCard({
+  property,
+  children,
+}: {
+  property: PropertyDetail
+  children?: ReactNode
+}) {
   const operations = property.operations ?? []
   const fee = property.maintenanceFee
-
-  const message = `Hola Hausly, me interesa "${property.title ?? "esta propiedad"}"${
-    property.code ? ` (${property.code})` : ""
-  }. ¿Me pasás más información?`
+  const message = buildContactMessage(property)
 
   return (
     <div className="rounded-2xl border border-border bg-background p-6 shadow-sm">
@@ -47,15 +55,15 @@ export function PropertyContactCard({ property }: { property: PropertyDetail }) 
         </p>
       ) : null}
 
-      {/* Form inline scoped a esta propiedad (issue #11): la consulta queda
-          vinculada al `_id`, con el mensaje pre-cargado. Sin navegar fuera del
-          detalle. WhatsApp queda como canal alternativo. */}
-      <div className="mt-6">
-        <h2 className="text-body font-semibold text-foreground">Consultá por esta propiedad</h2>
-        <div className="mt-4">
-          <LeadForm propertyId={property._id} defaultMessage={message} />
+      {/* Slot del form de consulta (feature `leads`), inyectado por la página.
+          Scoped a esta propiedad, sin navegar fuera del detalle. WhatsApp queda
+          como canal alternativo. */}
+      {children ? (
+        <div className="mt-6">
+          <h2 className="text-body font-semibold text-foreground">Consultá por esta propiedad</h2>
+          <div className="mt-4">{children}</div>
         </div>
-      </div>
+      ) : null}
 
       <div className="mt-3">
         <Button asChild variant="outline" size="lg" className="h-11 w-full">

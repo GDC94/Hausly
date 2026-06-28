@@ -44,6 +44,17 @@ export function resolveGalleryImages(property: PropertyDetail): GalleryImage[] {
   }))
 }
 
+/**
+ * Mensaje pre-cargado de la consulta por una propiedad (WhatsApp + `LeadForm`).
+ * Vive en el feature `properties` (es presentación del detalle); la página lo pasa
+ * al `LeadForm` del feature `leads` para no acoplar un feature con otro
+ * (specs/ARCHITECTURE.md §3: el feature no importa de otro, `app/` compone).
+ */
+export function buildContactMessage(property: PropertyDetail): string {
+  const code = property.code ? ` (${property.code})` : ""
+  return `Hola Hausly, me interesa "${property.title ?? "esta propiedad"}"${code}. ¿Me pasás más información?`
+}
+
 /** "3 amb · 2 baños · 85 m²" — omite ausentes (mismo criterio que la card, §4). */
 export function buildSpecLine({ rooms, bathrooms, coveredArea }: PropertyDetail): string {
   const parts: string[] = []

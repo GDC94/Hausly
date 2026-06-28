@@ -29,6 +29,12 @@ describe("leadSchema", () => {
     expect(r.success).toBe(false)
   })
 
+  it("normaliza (trim) un email pegado con espacios alrededor", () => {
+    const r = leadSchema.safeParse({ name: "Ana", email: "  ana@mail.com  " })
+    expect(r.success).toBe(true)
+    if (r.success) expect(r.data.email).toBe("ana@mail.com")
+  })
+
   it("exige el nombre", () => {
     const r = leadSchema.safeParse({ name: "", email: "ana@mail.com" })
     expect(r.success).toBe(false)

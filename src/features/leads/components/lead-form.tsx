@@ -69,7 +69,6 @@ export function LeadForm({ propertyId, defaultMessage }: LeadFormProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
       <input type="hidden" {...register("propertyId")} />
-      <input type="hidden" {...register("source")} />
 
       <Field id="lead-name" label="Nombre" error={errors.name?.message}>
         <input

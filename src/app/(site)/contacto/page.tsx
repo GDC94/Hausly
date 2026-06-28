@@ -18,7 +18,7 @@ const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComp
 // Página de contacto (specs/LAYOUT.md §8): form de lead + NAP de la agencia +
 // WhatsApp + link al mapa. Estática: el form es un client component (`LeadForm`)
 // que llama al Server Action; la página sólo compone.
-export default function ContactoPage() {
+export default function ContactPage() {
   return (
     <section className="mx-auto max-w-(--container-max) px-(--container-padding) py-10 lg:py-14">
       <header className="max-w-prose">

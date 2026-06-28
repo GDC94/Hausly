@@ -32,11 +32,13 @@ export async function submitLead(raw: unknown): Promise<LeadFormState> {
   }
 
   try {
-    await createLead(parsed.data, {
-      repo: sanityLeadRepo,
-      notifier: logNotifier,
-      analytics: noopAnalytics,
-    })
+    // `source` se DERIVA en el servidor, no se confía en el cliente: este action es
+    // el canal "form". Un hidden input es manipulable (podría llegar "whatsapp" y
+    // ensuciar la atribución), así que se sobrescribe acá.
+    await createLead(
+      { ...parsed.data, source: "form" },
+      { repo: sanityLeadRepo, notifier: logNotifier, analytics: noopAnalytics },
+    )
     return {
       status: "success",
       message: "¡Gracias por tu consulta! Te vamos a contactar a la brevedad.",

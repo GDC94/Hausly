@@ -1,8 +1,10 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { LeadForm } from "@/features/leads"
 import {
   buildBreadcrumbJsonLd,
+  buildContactMessage,
   buildPropertyListingJsonLd,
   buildPropertyMetadata,
   buildSpecLine,
@@ -91,7 +93,11 @@ export default async function PropertyDetailPage({ params }: { params: Params })
         </div>
 
         <aside className="lg:sticky lg:top-24 lg:self-start">
-          <PropertyContactCard property={property} />
+          {/* La PÁGINA compone los dos features: la card es de `properties` y el
+              form de `leads`. Así ningún feature importa de otro (ARCHITECTURE §3). */}
+          <PropertyContactCard property={property}>
+            <LeadForm propertyId={property._id} defaultMessage={buildContactMessage(property)} />
+          </PropertyContactCard>
         </aside>
       </div>
 

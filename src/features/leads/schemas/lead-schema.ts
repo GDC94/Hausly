@@ -14,7 +14,15 @@ import { z } from "zod"
 export const leadSchema = z
   .object({
     name: z.string().trim().min(1, "Ingresá tu nombre").max(120),
-    email: z.union([z.literal(""), z.email("Revisá el email")]).optional(),
+    // Trim ANTES de validar: un email pegado con espacios alrededor es válido una
+    // vez normalizado. Sin esto, `z.email()` lo rechaza (la validación nativa del
+    // form está desactivada y el servidor reusa el mismo schema).
+    email: z
+      .preprocess(
+        (value) => (typeof value === "string" ? value.trim() : value),
+        z.union([z.literal(""), z.email("Revisá el email")]),
+      )
+      .optional(),
     phone: z.string().trim().max(40).optional(),
     message: z.string().trim().max(2000).optional(),
     /** `_id` de la propiedad consultada; ausente = consulta general. */
