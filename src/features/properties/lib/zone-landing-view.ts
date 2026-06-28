@@ -25,6 +25,15 @@ export function buildZoneListingHref(slug: string): string {
 }
 
 /**
+ * Path de la landing de la zona. Encode el slug: un slug con caracteres reservados
+ * (espacio, `#`, …) emitiría una URL rota (fragmento/otro path) si se interpola
+ * crudo. Único dueño del path → canonical y links comparten una sola forma.
+ */
+export function buildZonePath(slug: string): string {
+  return `/propiedades/zona/${encodeURIComponent(slug)}`
+}
+
+/**
  * Metadata SEO local de la landing (specs/SEO.md §7): `title`/H1 geográfico,
  * **canonical auto-referente** a la propia zona (NO a `/propiedades`) e
  * **indexable** (es el eje finito de alto valor, a diferencia de las variantes
@@ -41,7 +50,7 @@ export function buildZoneMetadata(zone: ZoneLandingData): Metadata {
   return {
     title: heading,
     description,
-    alternates: { canonical: `/propiedades/zona/${zone.slug}` },
+    alternates: { canonical: buildZonePath(zone.slug) },
     openGraph: { type: "website", title: heading },
   }
 }

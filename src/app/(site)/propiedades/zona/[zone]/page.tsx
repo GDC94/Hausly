@@ -10,7 +10,10 @@ import {
 } from "@/features/properties"
 import { getZone, getZoneSlugs, SearchFilters } from "@/features/search"
 
-type Params = Promise<{ zona: string }>
+// Param de ruta en INGLÉS (contrato de idioma: código/carpetas en inglés, URLs en
+// español). El segmento estático `zona/` mantiene la URL `/propiedades/zona/<slug>`
+// en español; el nombre de la carpeta dinámica `[zone]` no aparece en la URL.
+type Params = Promise<{ zone: string }>
 
 // Landing por zona ESTÁTICA (specs/ARCHITECTURE.md §4, specs/SEO.md §7): una ruta
 // por `zone`, pre-generada en el build. Es el eje SEO local indexable con canonical
@@ -19,35 +22,31 @@ type Params = Promise<{ zona: string }>
 // 100% estática. El filtrado/paginación libre "sale" a `/propiedades?zone=…`.
 export async function generateStaticParams() {
   const slugs = await getZoneSlugs()
-  return slugs.filter((z): z is { slug: string } => Boolean(z.slug)).map((z) => ({ zona: z.slug }))
+  return slugs.filter((z): z is { slug: string } => Boolean(z.slug)).map((z) => ({ zone: z.slug }))
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-  const { zona } = await params
-  const zone = await getZone(zona)
-  // `zona` (param de la ruta) ES el slug matcheado — lo usamos como `slug` porque
-  // el TypeGen tipa `slug.current` como nullable y acá ya sabemos que existe.
-  return zone
-    ? buildZoneMetadata({ name: zone.name, slug: zona, description: zone.description })
-    : {}
+  const { zone: slug } = await params
+  const zone = await getZone(slug)
+  // `slug` (param de la ruta) ES el slug matcheado — lo usamos porque el TypeGen
+  // tipa `slug.current` como nullable y acá ya sabemos que existe.
+  return zone ? buildZoneMetadata({ name: zone.name, slug, description: zone.description }) : {}
 }
 
 export default async function ZoneLandingPage({ params }: { params: Params }) {
-  const { zona } = await params
+  const { zone: slug } = await params
   const [zone, { items, total }] = await Promise.all([
-    getZone(zona),
+    getZone(slug),
     // Reusa el listado filtrado (issue #5-#8): zona fijada por la ruta, primera
     // página (offset 0). No hay "Cargar más" in-place porque eso requeriría
     // `searchParams` (rompería el estático); el excedente se ve en el listado.
-    getProperties({ zones: [zona] }, 0),
+    getProperties({ zones: [slug] }, 0),
   ])
   if (!zone) notFound()
 
   const heading = zoneHeading(zone.name)
-  // `zona` (param) ES el slug matcheado; el TypeGen lo tipa nullable pero acá existe.
-  const lockedZone = zone.name ? { slug: zona, name: zone.name } : undefined
   const hasMore = items.length < total
-  const listingHref = buildZoneListingHref(zona)
+  const listingHref = buildZoneListingHref(slug)
 
   return (
     <section className="mx-auto max-w-(--container-max) px-(--container-padding) py-10 lg:py-14">
@@ -63,7 +62,10 @@ export default async function ZoneLandingPage({ params }: { params: Params }) {
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[18rem_1fr]">
         <aside className="lg:sticky lg:top-24 lg:self-start">
-          <SearchFilters filters={{}} zones={[]} lockedZone={lockedZone} />
+          {/* La zona la fija la ruta (siempre el slug matcheado, exista o no `name`):
+              el slug es lo que conserva el scope al enviar filtros, así que se pasa
+              siempre — no se gatea en `name`. */}
+          <SearchFilters filters={{}} zones={[]} lockedZoneSlug={slug} />
         </aside>
 
         <div>

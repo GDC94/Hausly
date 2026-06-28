@@ -22,6 +22,15 @@ describe("buildZoneMetadata", () => {
     expect(meta.alternates?.canonical).toBe("/propiedades/zona/palermo")
   })
 
+  it("codifica el slug del canonical (no emite una URL rota por caracteres reservados)", () => {
+    const meta = buildZoneMetadata({
+      name: "Villa Crespo",
+      slug: "villa crespo",
+      description: null,
+    })
+    expect(meta.alternates?.canonical).toBe("/propiedades/zona/villa%20crespo")
+  })
+
   it("es indexable: la landing es el eje SEO local (sin robots noindex)", () => {
     const meta = buildZoneMetadata({ name: "Palermo", slug: "palermo", description: null })
     expect(meta.robots).toBeUndefined()
