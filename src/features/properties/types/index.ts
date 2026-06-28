@@ -5,4 +5,4 @@ import type { PropertiesQueryResult } from "@/shared/sanity/sanity.types"
  * del resultado tipado de la query — no del `property` completo — así la card y
  * la query comparten una sola fuente de verdad (TypeGen).
  */
-export type PropertyCardData = PropertiesQueryResult[number]
+export type PropertyCardData = PropertiesQueryResult["items"][number]
