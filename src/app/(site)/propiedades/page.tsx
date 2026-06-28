@@ -3,12 +3,29 @@ import Link from "next/link"
 import { getProperties, LoadMore, PropertyGrid } from "@/features/properties"
 import { getZones, parseOffset, parseSearchParams, SearchFilters } from "@/features/search"
 
-export const metadata: Metadata = {
-  title: "Propiedades",
-  description: "Casas, departamentos y más en venta y alquiler en las mejores zonas.",
-}
-
 type RawSearchParams = Record<string, string | string[] | undefined>
+
+// Cualquier `searchParam` (faceta o paginación `?offset=`) genera una VARIANTE
+// del listado: se marca `noindex, follow` → el bot sigue el `rel="next"` y
+// descubre las propiedades, pero NO indexa la variante (evita contenido
+// duplicado por querystring, specs/ARCHITECTURE.md §4: "searchParams (noindex)").
+// El `/propiedades` pelado queda indexable; las landings de zona son el eje SEO
+// indexable (specs/SEO.md §7). Canonical/metadataBase → SEO base (#13).
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<RawSearchParams>
+}): Promise<Metadata> {
+  const sp = await searchParams
+  // Filtra keys con valor `undefined`: el tipo de `searchParams` las permite, y
+  // contarlas marcaría `noindex` al `/propiedades` pelado por error.
+  const hasParams = Object.values(sp).some((value) => value !== undefined)
+  return {
+    title: "Propiedades",
+    description: "Casas, departamentos y más en venta y alquiler en las mejores zonas.",
+    robots: hasParams ? { index: false, follow: true } : undefined,
+  }
+}
 
 // Listado filtrado por facetas y paginado por lotes ("Cargar más"), cacheado por
 // tags (`['property','zone']`): publicar en Sanity revalida vía webhook, no por

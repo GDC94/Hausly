@@ -162,4 +162,14 @@ describe("buildPropertiesQuery · paginación 'Cargar más' (groq-js, real evalu
     const { total } = await runQuery({ currency: "USD" }, 1)
     expect(total).toBe(2)
   })
+
+  it("sin resultados: items vacío y total 0 (estado vacío de la página)", async () => {
+    // Filtro que no matchea nada → la página muestra el empty state y NO el botón.
+    const { items, total } = await runQuery(
+      { operation: "sale", currency: "USD", priceMin: 999_999_999 },
+      24,
+    )
+    expect(items).toHaveLength(0)
+    expect(total).toBe(0)
+  })
 })
