@@ -10,3 +10,18 @@ const builder = imageUrlBuilder({ projectId, dataset })
 export function urlFor(source: SanityImageSource) {
   return builder.image(source)
 }
+
+/**
+ * URL lista para usar. Con `height` recorta hotspot-aware al rectángulo exacto
+ * (OG, thumbnails); sin `height` ajusta al ancho conservando proporción (hero,
+ * galería). Centraliza el `.fit()` en un solo lugar.
+ */
+export function imageUrl(
+  source: SanityImageSource,
+  { width, height }: { width: number; height?: number },
+): string {
+  const base = urlFor(source).width(width)
+  // biome-ignore lint/suspicious/noFocusedTests: `.fit()` es el builder de @sanity/image-url, no un test focalizado.
+  const sized = height ? base.height(height).fit("crop") : base.fit("max")
+  return sized.auto("format").url()
+}

@@ -12,132 +12,132 @@
  * ---------------------------------------------------------------------------------
  */
 
-export declare const internalGroqTypeReferenceTo: unique symbol
+export declare const internalGroqTypeReferenceTo: unique symbol;
 
 // Source: schema.json
 export type ZoneReference = {
-  _ref: string
-  _type: "reference"
-  _weak?: boolean
-  [internalGroqTypeReferenceTo]?: "zone"
-}
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "zone";
+};
 
 export type Location = {
-  _type: "location"
-  zone?: ZoneReference
-  address?: string
-  showAddress?: boolean
-  geopoint?: Geopoint
-}
+  _type: "location";
+  zone?: ZoneReference;
+  address?: string;
+  showAddress?: boolean;
+  geopoint?: Geopoint;
+};
 
 export type Price = {
-  _type: "price"
-  amount?: number
-  currency?: "USD" | "ARS"
-}
+  _type: "price";
+  amount?: number;
+  currency?: "USD" | "ARS";
+};
 
 export type Operation = {
-  _type: "operation"
-  type?: "sale" | "rent" | "temporaryRent"
-  price?: Price
-}
+  _type: "operation";
+  type?: "sale" | "rent" | "temporaryRent";
+  price?: Price;
+};
 
 export type PropertyReference = {
-  _ref: string
-  _type: "reference"
-  _weak?: boolean
-  [internalGroqTypeReferenceTo]?: "property"
-}
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "property";
+};
 
 export type Lead = {
-  _id: string
-  _type: "lead"
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  name?: string
-  phone?: string
-  email?: string
-  message?: string
-  property?: PropertyReference
-  source?: "form" | "whatsapp"
-  status?: "new" | "contacted" | "closed"
-}
+  _id: string;
+  _type: "lead";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  phone?: string;
+  email?: string;
+  message?: string;
+  property?: PropertyReference;
+  source?: "form" | "whatsapp";
+  status?: "new" | "contacted" | "closed";
+};
 
 export type SanityImageAssetReference = {
-  _ref: string
-  _type: "reference"
-  _weak?: boolean
-  [internalGroqTypeReferenceTo]?: "sanity.imageAsset"
-}
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+};
 
 export type Agency = {
-  _id: string
-  _type: "agency"
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  name?: string
+  _id: string;
+  _type: "agency";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
   logo?: {
-    asset?: SanityImageAssetReference
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    _type: "image"
-  }
-  phone?: string
-  whatsapp?: string
-  email?: string
-  address?: string
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  phone?: string;
+  whatsapp?: string;
+  email?: string;
+  address?: string;
   socials?: {
-    instagram?: string
-    facebook?: string
-  }
-}
+    instagram?: string;
+    facebook?: string;
+  };
+};
 
 export type SanityImageCrop = {
-  _type: "sanity.imageCrop"
-  top?: number
-  bottom?: number
-  left?: number
-  right?: number
-}
+  _type: "sanity.imageCrop";
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+};
 
 export type SanityImageHotspot = {
-  _type: "sanity.imageHotspot"
-  x?: number
-  y?: number
-  height?: number
-  width?: number
-}
+  _type: "sanity.imageHotspot";
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
+};
 
 export type Zone = {
-  _id: string
-  _type: "zone"
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  name?: string
-  slug?: Slug
-  city?: string
-  province?: string
-}
+  _id: string;
+  _type: "zone";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  slug?: Slug;
+  city?: string;
+  province?: string;
+};
 
 export type Slug = {
-  _type: "slug"
-  current?: string
-  source?: string
-}
+  _type: "slug";
+  current?: string;
+  source?: string;
+};
 
 export type Property = {
-  _id: string
-  _type: "property"
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  title?: string
-  slug?: Slug
-  code?: string
+  _id: string;
+  _type: "property";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  slug?: Slug;
+  code?: string;
   propertyType?:
     | "house"
     | "apartment"
@@ -147,159 +147,159 @@ export type Property = {
     | "office"
     | "warehouse"
     | "garage"
-    | "farm"
+    | "farm";
   operations?: Array<
     {
-      _key: string
+      _key: string;
     } & Operation
-  >
+  >;
   description?: Array<{
     children?: Array<{
-      marks?: Array<string>
-      text?: string
-      _type: "span"
-      _key: string
-    }>
-    style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote"
-    listItem?: "bullet" | "number"
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
+    listItem?: "bullet" | "number";
     markDefs?: Array<{
-      href?: string
-      _type: "link"
-      _key: string
-    }>
-    level?: number
-    _type: "block"
-    _key: string
-  }>
-  location?: Location
-  bedrooms?: number
-  bathrooms?: number
-  rooms?: number
-  coveredArea?: number
-  totalArea?: number
-  parkingSpaces?: number
-  age?: number
-  condition?: "brandNew" | "used" | "preConstruction"
-  maintenanceFee?: Price
-  amenities?: Array<string>
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+  location?: Location;
+  bedrooms?: number;
+  bathrooms?: number;
+  rooms?: number;
+  coveredArea?: number;
+  totalArea?: number;
+  parkingSpaces?: number;
+  age?: number;
+  condition?: "brandNew" | "used" | "preConstruction";
+  maintenanceFee?: Price;
+  amenities?: Array<string>;
   mainImage?: {
-    asset?: SanityImageAssetReference
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    alt?: string
-    _type: "image"
-  }
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
   gallery?: Array<{
-    asset?: SanityImageAssetReference
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    alt?: string
-    _type: "image"
-    _key: string
-  }>
-  status?: "available" | "reserved" | "sold" | "rented"
-  featured?: boolean
-  instagramUrl?: string
-}
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+    _key: string;
+  }>;
+  status?: "available" | "reserved" | "sold" | "rented";
+  featured?: boolean;
+  instagramUrl?: string;
+};
 
 export type Geopoint = {
-  _type: "geopoint"
-  lat?: number
-  lng?: number
-  alt?: number
-}
+  _type: "geopoint";
+  lat?: number;
+  lng?: number;
+  alt?: number;
+};
 
 export type SanityImagePaletteSwatch = {
-  _type: "sanity.imagePaletteSwatch"
-  background?: string
-  foreground?: string
-  population?: number
-  title?: string
-}
+  _type: "sanity.imagePaletteSwatch";
+  background?: string;
+  foreground?: string;
+  population?: number;
+  title?: string;
+};
 
 export type SanityImagePalette = {
-  _type: "sanity.imagePalette"
-  darkMuted?: SanityImagePaletteSwatch
-  lightVibrant?: SanityImagePaletteSwatch
-  darkVibrant?: SanityImagePaletteSwatch
-  vibrant?: SanityImagePaletteSwatch
-  dominant?: SanityImagePaletteSwatch
-  lightMuted?: SanityImagePaletteSwatch
-  muted?: SanityImagePaletteSwatch
-}
+  _type: "sanity.imagePalette";
+  darkMuted?: SanityImagePaletteSwatch;
+  lightVibrant?: SanityImagePaletteSwatch;
+  darkVibrant?: SanityImagePaletteSwatch;
+  vibrant?: SanityImagePaletteSwatch;
+  dominant?: SanityImagePaletteSwatch;
+  lightMuted?: SanityImagePaletteSwatch;
+  muted?: SanityImagePaletteSwatch;
+};
 
 export type SanityImageDimensions = {
-  _type: "sanity.imageDimensions"
-  height?: number
-  width?: number
-  aspectRatio?: number
-}
+  _type: "sanity.imageDimensions";
+  height?: number;
+  width?: number;
+  aspectRatio?: number;
+};
 
 export type SanityImageMetadata = {
-  _type: "sanity.imageMetadata"
-  location?: Geopoint
-  dimensions?: SanityImageDimensions
-  palette?: SanityImagePalette
-  lqip?: string
-  blurHash?: string
-  thumbHash?: string
-  hasAlpha?: boolean
-  isOpaque?: boolean
-}
+  _type: "sanity.imageMetadata";
+  location?: Geopoint;
+  dimensions?: SanityImageDimensions;
+  palette?: SanityImagePalette;
+  lqip?: string;
+  blurHash?: string;
+  thumbHash?: string;
+  hasAlpha?: boolean;
+  isOpaque?: boolean;
+};
 
 export type SanityFileAsset = {
-  _id: string
-  _type: "sanity.fileAsset"
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  originalFilename?: string
-  label?: string
-  title?: string
-  description?: string
-  altText?: string
-  sha1hash?: string
-  extension?: string
-  mimeType?: string
-  size?: number
-  assetId?: string
-  uploadId?: string
-  path?: string
-  url?: string
-  source?: SanityAssetSourceData
-}
+  _id: string;
+  _type: "sanity.fileAsset";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  originalFilename?: string;
+  label?: string;
+  title?: string;
+  description?: string;
+  altText?: string;
+  sha1hash?: string;
+  extension?: string;
+  mimeType?: string;
+  size?: number;
+  assetId?: string;
+  uploadId?: string;
+  path?: string;
+  url?: string;
+  source?: SanityAssetSourceData;
+};
 
 export type SanityAssetSourceData = {
-  _type: "sanity.assetSourceData"
-  name?: string
-  id?: string
-  url?: string
-}
+  _type: "sanity.assetSourceData";
+  name?: string;
+  id?: string;
+  url?: string;
+};
 
 export type SanityImageAsset = {
-  _id: string
-  _type: "sanity.imageAsset"
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  originalFilename?: string
-  label?: string
-  title?: string
-  description?: string
-  altText?: string
-  sha1hash?: string
-  extension?: string
-  mimeType?: string
-  size?: number
-  assetId?: string
-  uploadId?: string
-  path?: string
-  url?: string
-  metadata?: SanityImageMetadata
-  source?: SanityAssetSourceData
-}
+  _id: string;
+  _type: "sanity.imageAsset";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  originalFilename?: string;
+  label?: string;
+  title?: string;
+  description?: string;
+  altText?: string;
+  sha1hash?: string;
+  extension?: string;
+  mimeType?: string;
+  size?: number;
+  assetId?: string;
+  uploadId?: string;
+  path?: string;
+  url?: string;
+  metadata?: SanityImageMetadata;
+  source?: SanityAssetSourceData;
+};
 
 export type AllSanitySchemaTypes =
   | ZoneReference
@@ -322,41 +322,133 @@ export type AllSanitySchemaTypes =
   | SanityImageMetadata
   | SanityFileAsset
   | SanityAssetSourceData
-  | SanityImageAsset
+  | SanityImageAsset;
 
 // Source: src/features/properties/queries/build-properties-query.ts
 // Variable: propertiesQuery
 // Query: {    "items": *[_type == "property"      && status == "available"      && (!defined($types) || propertyType in $types)      && (!defined($zones) || location.zone->slug.current in $zones)      && (!defined($rooms) || rooms >= $rooms)      && (!defined($bathrooms) || bathrooms >= $bathrooms)      && (!defined($areaMin) || coveredArea >= $areaMin)      && (!defined($areaMax) || coveredArea <= $areaMax)      && (!defined($parking) || parkingSpaces >= $parking)      && (!defined($conditions) || condition in $conditions)      && (!defined($amenities) || count(amenities[@ in $amenities]) == count($amenities))      && (!defined($q) || title match $q || code match $q || (location.showAddress == true && location.address match $q))      && count(operations[        (!defined($operation) || type == $operation) &&        (!defined($currency) || price.currency == $currency) &&        (!defined($priceMin) || price.amount >= $priceMin) &&        (!defined($priceMax) || price.amount <= $priceMax)      ]) > 0    ] | order(_createdAt desc) [0...$end] {      _id,      title,      "slug": slug.current,      rooms,      bathrooms,      coveredArea,      "zone": location.zone->name,      operations[]{ type, price },      mainImage {        ...,        "lqip": asset->metadata.lqip      }    },    "total": count(*[_type == "property"      && status == "available"      && (!defined($types) || propertyType in $types)      && (!defined($zones) || location.zone->slug.current in $zones)      && (!defined($rooms) || rooms >= $rooms)      && (!defined($bathrooms) || bathrooms >= $bathrooms)      && (!defined($areaMin) || coveredArea >= $areaMin)      && (!defined($areaMax) || coveredArea <= $areaMax)      && (!defined($parking) || parkingSpaces >= $parking)      && (!defined($conditions) || condition in $conditions)      && (!defined($amenities) || count(amenities[@ in $amenities]) == count($amenities))      && (!defined($q) || title match $q || code match $q || (location.showAddress == true && location.address match $q))      && count(operations[        (!defined($operation) || type == $operation) &&        (!defined($currency) || price.currency == $currency) &&        (!defined($priceMin) || price.amount >= $priceMin) &&        (!defined($priceMax) || price.amount <= $priceMax)      ]) > 0    ])  }
 export type PropertiesQueryResult = {
   items: Array<{
-    _id: string
-    title: string | null
-    slug: string | null
-    rooms: number | null
-    bathrooms: number | null
-    coveredArea: number | null
-    zone: string | null
+    _id: string;
+    title: string | null;
+    slug: string | null;
+    rooms: number | null;
+    bathrooms: number | null;
+    coveredArea: number | null;
+    zone: string | null;
     operations: Array<{
-      type: "rent" | "sale" | "temporaryRent" | null
-      price: Price | null
-    }> | null
+      type: "rent" | "sale" | "temporaryRent" | null;
+      price: Price | null;
+    }> | null;
     mainImage: {
-      asset?: SanityImageAssetReference
-      media?: unknown
-      hotspot?: SanityImageHotspot
-      crop?: SanityImageCrop
-      alt?: string
-      _type: "image"
-      lqip: string | null
-    } | null
-  }>
-  total: number
-}
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+      lqip: string | null;
+    } | null;
+  }>;
+  total: number;
+};
+
+// Source: src/features/properties/queries/get-property.ts
+// Variable: propertyQuery
+// Query: *[_type == "property" && slug.current == $slug][0] {    _id,    _createdAt,    _updatedAt,    title,    code,    "slug": slug.current,    propertyType,    status,    operations[]{ type, price },    description,    "descriptionPlain": pt::text(description),    location {      address,      showAddress,      geopoint,      "zone": zone->{ name, "slug": slug.current }    },    bedrooms,    bathrooms,    rooms,    coveredArea,    totalArea,    parkingSpaces,    age,    condition,    maintenanceFee,    amenities,    mainImage {      ...,      "lqip": asset->metadata.lqip    },    gallery[] {      ...,      "lqip": asset->metadata.lqip    }  }
+export type PropertyQueryResult = {
+  _id: string;
+  _createdAt: string;
+  _updatedAt: string;
+  title: string | null;
+  code: string | null;
+  slug: string | null;
+  propertyType:
+    | "apartment"
+    | "commercial"
+    | "farm"
+    | "garage"
+    | "house"
+    | "land"
+    | "office"
+    | "ph"
+    | "warehouse"
+    | null;
+  status: "available" | "rented" | "reserved" | "sold" | null;
+  operations: Array<{
+    type: "rent" | "sale" | "temporaryRent" | null;
+    price: Price | null;
+  }> | null;
+  description: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  descriptionPlain: string;
+  location: {
+    address: string | null;
+    showAddress: boolean | null;
+    geopoint: Geopoint | null;
+    zone: {
+      name: string | null;
+      slug: string | null;
+    } | null;
+  } | null;
+  bedrooms: number | null;
+  bathrooms: number | null;
+  rooms: number | null;
+  coveredArea: number | null;
+  totalArea: number | null;
+  parkingSpaces: number | null;
+  age: number | null;
+  condition: "brandNew" | "preConstruction" | "used" | null;
+  maintenanceFee: Price | null;
+  amenities: Array<string> | null;
+  mainImage: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+    lqip: string | null;
+  } | null;
+  gallery: Array<{
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+    _key: string;
+    lqip: string | null;
+  }> | null;
+} | null;
+
+// Source: src/features/properties/queries/get-property.ts
+// Variable: propertySlugsQuery
+// Query: *[_type == "property" && defined(slug.current)]{ "slug": slug.current }
+export type PropertySlugsQueryResult = Array<{
+  slug: string | null;
+}>;
 
 // Source: src/features/search/queries/get-zones.ts
 // Variable: zonesQuery
 // Query: *[_type == "zone"] | order(name asc) {    "slug": slug.current,    name  }
 export type ZonesQueryResult = Array<{
-  slug: string | null
-  name: string | null
-}>
+  slug: string | null;
+  name: string | null;
+}>;

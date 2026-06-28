@@ -37,9 +37,30 @@ export const SITE = {
 } as const
 
 /** URL de WhatsApp con mensaje prellenado (canal de leads, specs/STACK.md). */
-export function whatsappUrl(): string {
-  const { whatsapp, whatsappMessage } = SITE.contact
-  return `https://wa.me/${whatsapp}?text=${encodeURIComponent(whatsappMessage)}`
+export function whatsappUrl(message: string = SITE.contact.whatsappMessage): string {
+  return `https://wa.me/${SITE.contact.whatsapp}?text=${encodeURIComponent(message)}`
 }
+
+/**
+ * URL absoluta canónica del sitio. Obligatoria para `metadataBase`, los
+ * `canonical` y el `url`/`@id` del JSON-LD (specs/SEO.md §2, §4): sin base
+ * absoluta Next no resuelve canonical/OG y los validadores de datos
+ * estructurados rechazan URLs relativas.
+ *
+ * Resolución: env explícita → dominio de producción de Vercel → localhost. El
+ * fallback mantiene el build verde aunque la env no esté seteada todavía.
+ */
+export function getSiteUrl(): string {
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL
+  if (explicit) return explicit.replace(/\/$/, "")
+
+  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  if (vercel) return `https://${vercel}`
+
+  return "http://localhost:3000"
+}
+
+/** Nombre de marca para metadata (title template) y JSON-LD. */
+export const SITE_NAME = SITE.name
 
 export type SiteNavItem = (typeof SITE.nav)[number]
