@@ -3,4 +3,5 @@
 export { SearchFilters } from "./components/search-filters"
 export { parseOffset } from "./lib/parse-pagination"
 export { parseSearchParams } from "./lib/parse-search-params"
+export { getZone, getZoneSlugs } from "./queries/get-zone"
 export { getZones } from "./queries/get-zones"

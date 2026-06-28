@@ -10,6 +10,14 @@ type SearchFiltersProps = {
   filters: PropertyFilters
   /** Opciones de zona desde Sanity para la faceta correspondiente. */
   zones: ZonesQueryResult
+  /**
+   * Zona fijada por la ruta (landing `/propiedades/zona/[slug]`, issue #10). Cuando
+   * está presente: se oculta la faceta "Zona" (la zona la fija la URL, no el
+   * usuario), se arrastra como `<input hidden>` al enviar (el form navega al
+   * listado `/propiedades?zone=…`) y "Limpiar" vuelve a la landing de la zona en
+   * vez de a `/propiedades`.
+   */
+  lockedZone?: { slug: string; name: string }
 }
 
 /**
@@ -23,7 +31,8 @@ type SearchFiltersProps = {
  * anuncie el grupo (specs/SEO.md §6). Precio/operación/moneda llegan en el
  * issue #7 (su revelado contextual depende de la operación, specs/FILTERS.md §2).
  */
-export function SearchFilters({ filters, zones }: SearchFiltersProps) {
+export function SearchFilters({ filters, zones, lockedZone }: SearchFiltersProps) {
+  const clearHref = lockedZone ? `/propiedades/zona/${lockedZone.slug}` : "/propiedades"
   return (
     // `key` derivada de los filtros activos: los controles son uncontrolled
     // (`defaultChecked`/`defaultValue`), así que sin esto una navegación soft
@@ -37,6 +46,10 @@ export function SearchFilters({ filters, zones }: SearchFiltersProps) {
       action="/propiedades"
       className="flex flex-col gap-6"
     >
+      {/* Landing de zona: la zona la fija la ruta. Va como hidden para que el
+          form (que navega a `/propiedades`) arrastre la zona al listado. */}
+      {lockedZone ? <input type="hidden" name="zone" value={lockedZone.slug} /> : null}
+
       <div className="flex flex-col gap-1.5">
         <label htmlFor="filter-q" className="text-body-sm font-medium text-foreground">
           Buscar
@@ -63,7 +76,7 @@ export function SearchFilters({ filters, zones }: SearchFiltersProps) {
         selected={filters.types}
       />
 
-      {zones.length > 0 && (
+      {!lockedZone && zones.length > 0 && (
         <CheckboxGroup
           legend="Zona"
           name="zone"
@@ -129,7 +142,7 @@ export function SearchFilters({ filters, zones }: SearchFiltersProps) {
       <div className="flex flex-col gap-2">
         <Button type="submit">Aplicar filtros</Button>
         <Button asChild variant="ghost" size="sm">
-          <Link href="/propiedades">Limpiar filtros</Link>
+          <Link href={clearHref}>Limpiar filtros</Link>
         </Button>
       </div>
     </form>

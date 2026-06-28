@@ -119,6 +119,7 @@ export type Zone = {
   _rev: string
   name?: string
   slug?: Slug
+  description?: string
   city?: string
   province?: string
 }
@@ -442,6 +443,22 @@ export type PropertyQueryResult = {
 // Variable: propertySlugsQuery
 // Query: *[_type == "property" && defined(slug.current)]{ "slug": slug.current }
 export type PropertySlugsQueryResult = Array<{
+  slug: string | null
+}>
+
+// Source: src/features/search/queries/get-zone.ts
+// Variable: zoneBySlugQuery
+// Query: *[_type == "zone" && slug.current == $slug][0] {    name,    "slug": slug.current,    description  }
+export type ZoneBySlugQueryResult = {
+  name: string | null
+  slug: string | null
+  description: string | null
+} | null
+
+// Source: src/features/search/queries/get-zone.ts
+// Variable: zoneSlugsQuery
+// Query: *[_type == "zone" && defined(slug.current)]{ "slug": slug.current }
+export type ZoneSlugsQueryResult = Array<{
   slug: string | null
 }>
 

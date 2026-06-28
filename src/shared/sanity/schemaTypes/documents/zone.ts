@@ -23,6 +23,13 @@ export const zone = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "description",
+      title: "Descripción",
+      type: "text",
+      rows: 4,
+      description: "Texto de intro para la landing SEO de la zona (/propiedades/zona/[slug]).",
+    }),
+    defineField({
       name: "city",
       title: "Localidad",
       type: "string",
