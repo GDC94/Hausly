@@ -10,7 +10,7 @@ import { z } from "zod"
  * `property` — las vistas cacheadas se regeneran por contenido, no por TTL.
  *
  * Configurar en Sanity (manage → API → Webhooks), filtro `_type in
- * ["property","zone"]`, proyección mínima:
+ * ["property","zone","agency"]`, proyección mínima:
  *   { "_type": _type, "slug": slug.current }
  *
  * En un delete/unpublish el documento ya no existe → la proyección puede no traer
@@ -39,12 +39,13 @@ export async function POST(req: NextRequest) {
       return new Response("Payload inválido", { status: 400 })
     }
 
-    // Revalida el tag que matchea el `_type` (property | zone). En delete sin
-    // `_type` → revalida ambos como fallback, así una propiedad borrada deja de
-    // verse. `{ expire: 0 }` = expiración INMEDIATA (no stale-while-revalidate):
-    // el primer visitante tras el cambio ya ve el contenido nuevo.
+    // Revalida el tag que matchea el `_type` (property | zone | agency). Editar el
+    // singleton `agency` debe refrescar el JSON-LD `RealEstateAgent` global. En
+    // delete sin `_type` → revalida los listings como fallback, así una propiedad
+    // borrada deja de verse. `{ expire: 0 }` = expiración INMEDIATA (no
+    // stale-while-revalidate): el primer visitante tras el cambio ya ve lo nuevo.
     const type = parsed.data._type
-    const tags = type === "property" || type === "zone" ? [type] : LISTING_TAGS
+    const tags = type === "property" || type === "zone" || type === "agency" ? [type] : LISTING_TAGS
     for (const tag of tags) {
       revalidateTag(tag, { expire: 0 })
     }
