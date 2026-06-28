@@ -18,6 +18,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.4.0",
     "@portabletext/react": "^6.2.0",
     "@sanity/icons": "^3.7.4",
     "@sanity/image-url": "^2.1.1",
@@ -30,6 +31,7 @@
     "radix-ui": "^1.6.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-hook-form": "^7.80.0",
     "sanity": "^6.2.0",
     "styled-components": "^6.4.3",
     "tailwind-merge": "^3.6.0",

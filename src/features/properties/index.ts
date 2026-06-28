@@ -10,6 +10,7 @@ export { type GalleryImage, PropertyGallery } from "./components/property-galler
 export { PropertyGrid } from "./components/property-grid"
 export { PropertyLocation } from "./components/property-location"
 export {
+  buildContactMessage,
   buildPropertyMetadata,
   buildSpecLine,
   resolveGalleryImages,
