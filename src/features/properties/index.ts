@@ -15,6 +15,11 @@ export {
   resolveGalleryImages,
 } from "./lib/property-detail-view"
 export { buildBreadcrumbJsonLd, buildPropertyListingJsonLd } from "./lib/property-json-ld"
+export {
+  buildZoneListingHref,
+  buildZoneMetadata,
+  zoneHeading,
+} from "./lib/zone-landing-view"
 export { getProperties } from "./queries/get-properties"
 export { getProperty, getPropertySlugs } from "./queries/get-property"
 export type { PropertyCardData, PropertyDetail } from "./types"
