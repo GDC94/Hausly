@@ -3,6 +3,7 @@ import { AMENITY_LABELS, CONDITION_LABELS, PROPERTY_TYPE_LABELS } from "@/shared
 import type { ZonesQueryResult } from "@/shared/sanity/sanity.types"
 import { AMENITIES, CONDITIONS, PROPERTY_TYPES, type PropertyFilters } from "@/shared/types"
 import { Button } from "@/shared/ui/button"
+import { PriceFunnel } from "./price-funnel"
 
 type SearchFiltersProps = {
   /** Filtros activos (parseados de la URL) — fijan el estado inicial de los controles. */
@@ -49,6 +50,8 @@ export function SearchFilters({ filters, zones }: SearchFiltersProps) {
           className="h-9 rounded-md border bg-background px-3 text-body-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
         />
       </div>
+
+      <PriceFunnel filters={filters} />
 
       <CheckboxGroup
         legend="Tipo"
