@@ -1,4 +1,11 @@
-import { AMENITIES, CONDITIONS, PROPERTY_TYPES, type PropertyFilters } from "@/shared/types"
+import {
+  AMENITIES,
+  CONDITIONS,
+  CURRENCIES,
+  OPERATION_TYPES,
+  PROPERTY_TYPES,
+  type PropertyFilters,
+} from "@/shared/types"
 
 /**
  * Forma cruda de `searchParams` tal como Next 16 los entrega ya resueltos:
@@ -49,6 +56,28 @@ export function parseSearchParams(raw: RawSearchParams): PropertyFilters {
   const q = text(raw.q)
   if (q !== undefined) filters.q = q
 
+  // --- Embudo precio/operación/moneda (specs/FILTERS.md §2, §5) ---
+  // Cadena ESTRICTA: operación ⊃ moneda ⊃ precio. Cada eslabón requiere el
+  // anterior. Así el contrato de la URL coincide con el revelado de la UI
+  // (`PriceFunnel`): sin operación la UI no muestra moneda ni precio, y el parse
+  // tampoco los acepta — nada de filtros activos pero invisibles.
+  const operation = enumValue(raw.operation, OPERATION_TYPES)
+  if (operation) {
+    filters.operation = operation
+
+    const currency = enumValue(raw.currency, CURRENCIES)
+    if (currency) {
+      filters.currency = currency
+      // El rango de precio SÓLO tiene sentido con una moneda: no hay conversión
+      // USD↔ARS (Non-Goal), así que sin `currency` el rango se descarta entero.
+      const priceMin = minNumber(raw.priceMin)
+      if (priceMin !== undefined) filters.priceMin = priceMin
+
+      const priceMax = minNumber(raw.priceMax)
+      if (priceMax !== undefined) filters.priceMax = priceMax
+    }
+  }
+
   return filters
 }
 
@@ -75,6 +104,16 @@ function enumList<T extends readonly string[]>(
     (allowed as readonly string[]).includes(token),
   )
   return valid.length > 0 ? valid : undefined
+}
+
+/** Valor único validado contra un enum cerrado; `undefined` si no es válido. */
+function enumValue<T extends readonly string[]>(
+  value: string | string[] | undefined,
+  allowed: T,
+): T[number] | undefined {
+  const first = Array.isArray(value) ? value[0] : value
+  const token = first?.trim()
+  return token && (allowed as readonly string[]).includes(token) ? (token as T[number]) : undefined
 }
 
 /** Lista de slugs (zona): sin validación de enum, sólo descarta vacíos. */

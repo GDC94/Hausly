@@ -16,6 +16,10 @@ describe("buildPropertiesQuery", () => {
       conditions: null,
       amenities: null,
       q: null,
+      operation: null,
+      currency: null,
+      priceMin: null,
+      priceMax: null,
     })
   })
 
@@ -51,7 +55,33 @@ describe("buildPropertiesQuery", () => {
       conditions: ["brandNew"],
       amenities: ["pool", "grill"],
       q: "balcon*",
+      operation: null,
+      currency: null,
+      priceMin: null,
+      priceMax: null,
     })
+  })
+
+  it("maps the price funnel onto the operations[] sub-filter params", () => {
+    const { params } = buildPropertiesQuery({
+      operation: "sale",
+      currency: "USD",
+      priceMin: 100000,
+      priceMax: 250000,
+    })
+    expect(params.operation).toBe("sale")
+    expect(params.currency).toBe("USD")
+    expect(params.priceMin).toBe(100000)
+    expect(params.priceMax).toBe(250000)
+  })
+
+  it("evaluates operation/currency/price on the SAME operations[] element", () => {
+    const { query } = buildPropertiesQuery({})
+    // El sub-filtro vive DENTRO de un único count(operations[ ... ]) > 0 — los
+    // cuatro predicados sobre el mismo elemento, nunca como predicados sueltos.
+    expect(query).toMatch(
+      /count\(operations\[[\s\S]*type == \$operation[\s\S]*price\.currency == \$currency[\s\S]*price\.amount >= \$priceMin[\s\S]*price\.amount <= \$priceMax[\s\S]*\]\) > 0/,
+    )
   })
 
   it("applies a prefix wildcard to the text term (FILTERS §4, option A)", () => {

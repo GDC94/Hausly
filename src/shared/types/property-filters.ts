@@ -8,9 +8,10 @@
  * dos features vive en `shared/types`, no dentro de un feature — así properties
  * no importa de search.
  *
- * Alcance issue #6: facetas estructuradas simples (predicados `in` / `>=` /
- * `<=` / `match`). Precio + operación + moneda (el sub-filtro sobre el array
- * `operations[]`, specs/FILTERS.md §2) y `sort` llegan en el issue #7.
+ * Facetas estructuradas simples — predicados `in` / `>=` / `<=` / `match`
+ * (issue #6) — más el **embudo precio/operación/moneda** (issue #7): el
+ * sub-filtro sobre el array `operations[]` que evalúa los tres sobre el MISMO
+ * elemento (specs/FILTERS.md §2).
  *
  * Los valores de enum salen tal cual de specs/SANITY-SCHEMA.md §6 — no se
  * inventan ni se traducen (los `title` en español viven en el schema de Sanity).
@@ -41,9 +42,15 @@ export const AMENITIES = [
   "visitorParking",
 ] as const
 
+export const OPERATION_TYPES = ["sale", "rent", "temporaryRent"] as const
+
+export const CURRENCIES = ["USD", "ARS"] as const
+
 export type PropertyTypeValue = (typeof PROPERTY_TYPES)[number]
 export type ConditionValue = (typeof CONDITIONS)[number]
 export type AmenityValue = (typeof AMENITIES)[number]
+export type OperationTypeValue = (typeof OPERATION_TYPES)[number]
+export type CurrencyValue = (typeof CURRENCIES)[number]
 
 /**
  * Filtros validados. Todos los campos son opcionales: la ausencia de un campo
@@ -70,4 +77,17 @@ export type PropertyFilters = {
   amenities?: AmenityValue[]
   /** texto libre, best-effort con wildcard de prefijo (specs/FILTERS.md §4, opción A) */
   q?: string
+
+  // --- Embudo precio/operación/moneda (specs/FILTERS.md §2) ---
+  // Los tres se evalúan sobre el MISMO elemento de `operations[]`: nunca se
+  // cruza una venta-USD con un alquiler-ARS. `priceMin/Max` SIN `currency` no
+  // tienen sentido (no hay conversión, Non-Goal) y se descartan en el parse.
+  /** `operations[].type == $operation` (dentro del sub-filtro) */
+  operation?: OperationTypeValue
+  /** `operations[].price.currency == $currency` (filtro explícito, no derivado) */
+  currency?: CurrencyValue
+  /** `operations[].price.amount >= $priceMin` */
+  priceMin?: number
+  /** `operations[].price.amount <= $priceMax` */
+  priceMax?: number
 }

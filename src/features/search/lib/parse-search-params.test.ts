@@ -111,6 +111,69 @@ describe("parseSearchParams", () => {
     })
   })
 
+  describe("price funnel (operation / currency / price)", () => {
+    it("parses a single operation enum", () => {
+      expect(parseSearchParams({ operation: "sale" })).toEqual({ operation: "sale" })
+      expect(parseSearchParams({ operation: "temporaryRent" })).toEqual({
+        operation: "temporaryRent",
+      })
+    })
+
+    it("ignores an invalid operation", () => {
+      expect(parseSearchParams({ operation: "barter" })).toEqual({})
+    })
+
+    it("parses currency only WITH a valid operation (strict funnel chain, FILTERS §2/§5)", () => {
+      expect(parseSearchParams({ operation: "sale", currency: "USD" })).toEqual({
+        operation: "sale",
+        currency: "USD",
+      })
+    })
+
+    it("drops currency (and price) when there is no operation — el embudo es operación⊃moneda⊃precio", () => {
+      // El caso de la URL a mano: ?currency=USD&priceMax=200000 sin operation no
+      // debe filtrar por controles que la UI ni muestra (funnel chain estricta).
+      expect(parseSearchParams({ currency: "USD" })).toEqual({})
+      expect(parseSearchParams({ currency: "USD", priceMax: "200000" })).toEqual({})
+    })
+
+    it("ignores an invalid currency (keeping the valid operation)", () => {
+      expect(parseSearchParams({ operation: "sale", currency: "EUR" })).toEqual({
+        operation: "sale",
+      })
+    })
+
+    it("parses a price range only when a currency is present (FILTERS §2)", () => {
+      expect(
+        parseSearchParams({
+          operation: "sale",
+          currency: "USD",
+          priceMin: "100000",
+          priceMax: "200000",
+        }),
+      ).toEqual({ operation: "sale", currency: "USD", priceMin: 100000, priceMax: 200000 })
+    })
+
+    it("drops the price range when there is no currency (no conversion, Non-Goal)", () => {
+      expect(parseSearchParams({ priceMin: "100000", priceMax: "200000" })).toEqual({})
+      expect(parseSearchParams({ operation: "sale", priceMax: "200000" })).toEqual({
+        operation: "sale",
+      })
+    })
+
+    it("drops non-numeric / non-positive prices", () => {
+      expect(
+        parseSearchParams({ operation: "sale", currency: "USD", priceMin: "-5", priceMax: "x" }),
+      ).toEqual({ operation: "sale", currency: "USD" })
+    })
+
+    it("parses the full funnel together", () => {
+      expect(parseSearchParams({ operation: "sale", currency: "USD", priceMax: "250000" })).toEqual(
+        { operation: "sale", currency: "USD", priceMax: 250000 },
+      )
+    })
+  })
+
   it("parses a full combination", () => {
     expect(
       parseSearchParams({

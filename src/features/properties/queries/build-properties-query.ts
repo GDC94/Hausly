@@ -2,7 +2,7 @@ import { defineQuery } from "next-sanity"
 import type { PropertyFilters } from "@/shared/types"
 
 /**
- * Query de listado **con facetas** (specs/FILTERS.md §1,§3,§4). Un único dueño
+ * Query de listado **con facetas** (specs/FILTERS.md §1-§4). Un único dueño
  * del GROQ: `features/properties/queries` (specs/ARCHITECTURE.md §3). El
  * `search` produce el `PropertyFilters`; acá se convierte en query + bindings.
  *
@@ -11,15 +11,18 @@ import type { PropertyFilters } from "@/shared/types"
  * tipa con `defineQuery` (TypeGen). Lo único que varía entre requests son los
  * **params** — no el texto de la query. Eso mantiene el ensamblado como una
  * función pura testeable sin prender Sanity (specs/TESTING.md) y deja el orden
- * y el slice de "Cargar más" para cuando lleguen (issues #7+).
+ * y el slice de "Cargar más" para cuando lleguen (issues posteriores).
  *
  * El bloque base siempre fija `status == "available"`. La proyección es la forma
  * mínima de `PropertyCard` (`PropertyCardData`) — misma que el listado sin
  * filtros (issue #5), así card y query comparten una sola fuente de verdad.
  *
- * Alcance issue #6: facetas simples (`in` / `>=` / `<=` / `match`). El
- * sub-filtro de precio/operación/moneda sobre `operations[]` (specs/FILTERS.md
- * §2) llega en el issue #7 como una línea más de este mismo bloque.
+ * **Sub-filtro `operations[]` (la parte crítica, specs/FILTERS.md §2).** Una
+ * propiedad puede tener venta-USD Y alquiler-ARS simultáneos y NO hay conversión
+ * (Non-Goal). Por eso operación + moneda + precio se evalúan DENTRO de un único
+ * `count(operations[ … ]) > 0`: los cuatro predicados corren sobre el MISMO
+ * elemento del array. Así "venta hasta USD 200k" jamás matchea una propiedad
+ * cuya venta-USD es carísima sólo porque tiene aparte un alquiler-ARS barato.
  */
 export const propertiesQuery = defineQuery(`
   *[_type == "property"
@@ -34,6 +37,12 @@ export const propertiesQuery = defineQuery(`
     && (!defined($conditions) || condition in $conditions)
     && (!defined($amenities) || count(amenities[@ in $amenities]) == count($amenities))
     && (!defined($q) || title match $q || code match $q || (location.showAddress == true && location.address match $q))
+    && count(operations[
+      (!defined($operation) || type == $operation) &&
+      (!defined($currency) || price.currency == $currency) &&
+      (!defined($priceMin) || price.amount >= $priceMin) &&
+      (!defined($priceMax) || price.amount <= $priceMax)
+    ]) > 0
   ] | order(_createdAt desc) {
     _id,
     title,
@@ -67,6 +76,10 @@ export type PropertiesQueryParams = {
   conditions: string[] | null
   amenities: string[] | null
   q: string | null
+  operation: string | null
+  currency: string | null
+  priceMin: number | null
+  priceMax: number | null
 }
 
 /**
@@ -100,6 +113,10 @@ export function buildPropertiesQuery(filters: PropertyFilters): {
       conditions: filters.conditions ?? null,
       amenities: filters.amenities ?? null,
       q: filters.q ? `${filters.q}*` : null,
+      operation: filters.operation ?? null,
+      currency: filters.currency ?? null,
+      priceMin: filters.priceMin ?? null,
+      priceMax: filters.priceMax ?? null,
     },
   }
 }
