@@ -1,7 +1,20 @@
 // API pública del feature `properties`. `app/` y otros consumidores importan
 // SOLO desde acá, nunca de subcarpetas internas (regla AGENTS.md).
 export { LoadMore } from "./components/load-more"
+export { PropertyAmenities } from "./components/property-amenities"
 export { PropertyCard } from "./components/property-card"
+export { PropertyContactCard } from "./components/property-contact-card"
+export { PropertyDescription } from "./components/property-description"
+export { PropertyFeatures } from "./components/property-features"
+export { type GalleryImage, PropertyGallery } from "./components/property-gallery"
 export { PropertyGrid } from "./components/property-grid"
+export { PropertyLocation } from "./components/property-location"
+export {
+  buildPropertyMetadata,
+  buildSpecLine,
+  resolveGalleryImages,
+} from "./lib/property-detail-view"
+export { buildBreadcrumbJsonLd, buildPropertyListingJsonLd } from "./lib/property-json-ld"
 export { getProperties } from "./queries/get-properties"
-export type { PropertyCardData } from "./types"
+export { getProperty, getPropertySlugs } from "./queries/get-property"
+export type { PropertyCardData, PropertyDetail } from "./types"

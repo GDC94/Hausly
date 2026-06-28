@@ -353,6 +353,98 @@ export type PropertiesQueryResult = {
   total: number
 }
 
+// Source: src/features/properties/queries/get-property.ts
+// Variable: propertyQuery
+// Query: *[_type == "property" && slug.current == $slug][0] {    _id,    _createdAt,    _updatedAt,    title,    code,    "slug": slug.current,    propertyType,    status,    operations[]{ type, price },    description,    "descriptionPlain": pt::text(description),    location {      address,      showAddress,      geopoint,      "zone": zone->{ name, "slug": slug.current }    },    bedrooms,    bathrooms,    rooms,    coveredArea,    totalArea,    parkingSpaces,    age,    condition,    maintenanceFee,    amenities,    mainImage {      ...,      "lqip": asset->metadata.lqip    },    gallery[] {      ...,      "lqip": asset->metadata.lqip    }  }
+export type PropertyQueryResult = {
+  _id: string
+  _createdAt: string
+  _updatedAt: string
+  title: string | null
+  code: string | null
+  slug: string | null
+  propertyType:
+    | "apartment"
+    | "commercial"
+    | "farm"
+    | "garage"
+    | "house"
+    | "land"
+    | "office"
+    | "ph"
+    | "warehouse"
+    | null
+  status: "available" | "rented" | "reserved" | "sold" | null
+  operations: Array<{
+    type: "rent" | "sale" | "temporaryRent" | null
+    price: Price | null
+  }> | null
+  description: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: "span"
+      _key: string
+    }>
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal"
+    listItem?: "bullet" | "number"
+    markDefs?: Array<{
+      href?: string
+      _type: "link"
+      _key: string
+    }>
+    level?: number
+    _type: "block"
+    _key: string
+  }> | null
+  descriptionPlain: string
+  location: {
+    address: string | null
+    showAddress: boolean | null
+    geopoint: Geopoint | null
+    zone: {
+      name: string | null
+      slug: string | null
+    } | null
+  } | null
+  bedrooms: number | null
+  bathrooms: number | null
+  rooms: number | null
+  coveredArea: number | null
+  totalArea: number | null
+  parkingSpaces: number | null
+  age: number | null
+  condition: "brandNew" | "preConstruction" | "used" | null
+  maintenanceFee: Price | null
+  amenities: Array<string> | null
+  mainImage: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    _type: "image"
+    lqip: string | null
+  } | null
+  gallery: Array<{
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    _type: "image"
+    _key: string
+    lqip: string | null
+  }> | null
+} | null
+
+// Source: src/features/properties/queries/get-property.ts
+// Variable: propertySlugsQuery
+// Query: *[_type == "property" && defined(slug.current)]{ "slug": slug.current }
+export type PropertySlugsQueryResult = Array<{
+  slug: string | null
+}>
+
 // Source: src/features/search/queries/get-zones.ts
 // Variable: zonesQuery
 // Query: *[_type == "zone"] | order(name asc) {    "slug": slug.current,    name  }

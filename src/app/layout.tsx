@@ -1,9 +1,14 @@
 import { GeistSans } from "geist/font/sans"
 import type { Metadata } from "next"
+import { getSiteUrl, SITE_NAME } from "@/shared/config/site"
 import "@/styles/globals.css"
 
+// `metadataBase` resuelve los `canonical`/OG relativos a URL absoluta (specs/SEO.md
+// §2). El `template` aplica " | Hausly" a cada `title` por ruta; el `default` cubre
+// las rutas sin title propio.
 export const metadata: Metadata = {
-  title: "Hausly",
+  metadataBase: new URL(getSiteUrl()),
+  title: { default: SITE_NAME, template: `%s | ${SITE_NAME}` },
   description: "Inmobiliaria",
 }
 
