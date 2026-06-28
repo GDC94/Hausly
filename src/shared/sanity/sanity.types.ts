@@ -324,9 +324,9 @@ export type AllSanitySchemaTypes =
   | SanityAssetSourceData
   | SanityImageAsset
 
-// Source: src/features/properties/queries/get-properties.ts
+// Source: src/features/properties/queries/build-properties-query.ts
 // Variable: propertiesQuery
-// Query: *[_type == "property" && status == "available"] | order(_createdAt desc) {    _id,    title,    "slug": slug.current,    rooms,    bathrooms,    coveredArea,    "zone": location.zone->name,    operations[]{ type, price },    mainImage {      ...,      "lqip": asset->metadata.lqip    }  }
+// Query: *[_type == "property"    && status == "available"    && (!defined($types) || propertyType in $types)    && (!defined($zones) || location.zone->slug.current in $zones)    && (!defined($rooms) || rooms >= $rooms)    && (!defined($bathrooms) || bathrooms >= $bathrooms)    && (!defined($areaMin) || coveredArea >= $areaMin)    && (!defined($areaMax) || coveredArea <= $areaMax)    && (!defined($parking) || parkingSpaces >= $parking)    && (!defined($conditions) || condition in $conditions)    && (!defined($amenities) || count(amenities[@ in $amenities]) == count($amenities))    && (!defined($q) || title match $q || code match $q || (location.showAddress == true && location.address match $q))  ] | order(_createdAt desc) {    _id,    title,    "slug": slug.current,    rooms,    bathrooms,    coveredArea,    "zone": location.zone->name,    operations[]{ type, price },    mainImage {      ...,      "lqip": asset->metadata.lqip    }  }
 export type PropertiesQueryResult = Array<{
   _id: string
   title: string | null
@@ -348,4 +348,12 @@ export type PropertiesQueryResult = Array<{
     _type: "image"
     lqip: string | null
   } | null
+}>
+
+// Source: src/features/search/queries/get-zones.ts
+// Variable: zonesQuery
+// Query: *[_type == "zone"] | order(name asc) {    "slug": slug.current,    name  }
+export type ZonesQueryResult = Array<{
+  slug: string | null
+  name: string | null
 }>
