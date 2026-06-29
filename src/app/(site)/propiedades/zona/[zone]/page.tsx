@@ -69,6 +69,10 @@ export default async function ZoneLandingPage({ params }: { params: Params }) {
         </aside>
 
         <div>
+          {/* Encabezado de la región de resultados: evita el salto h1→h3 de las
+              `PropertyCard` (heading-order, specs/SEO.md §6). sr-only: el `h1` y el
+              conteo ya lo comunican visualmente. */}
+          <h2 className="sr-only">Propiedades en {zone.name ?? "esta zona"}</h2>
           {total > 0 ? (
             <>
               <PropertyGrid properties={items} />
