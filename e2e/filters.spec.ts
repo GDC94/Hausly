@@ -3,7 +3,7 @@ import { dismissConsent } from "./helpers"
 
 /**
  * Camino crítico filtro → resultados (specs/TESTING.md §2, specs/FILTERS.md §5).
- * Cubre lo NO-negociable: el embudo contextual operación→moneda→precio se revela
+ * Cubre lo NO-negociable: el embudo contextual operación→currency→precio se revela
  * en orden, y al aplicar filtros la URL (única fuente de verdad) refleja los params
  * y el listado re-renderiza. Los asserts no dependen de qué propiedades haya en el
  * dataset salvo el caso base — así el gate no es flaky contra el catálogo real.
@@ -22,22 +22,22 @@ test.describe("Filtro → resultados", () => {
     await expect(page.locator("article").first()).toBeVisible()
   })
 
-  test("el embudo revela moneda y precio en orden", async ({ page }) => {
-    const moneda = page.getByRole("radiogroup", { name: "Moneda" })
-    // Sin operación: no hay moneda ni precio todavía (revelado contextual).
-    await expect(moneda).toHaveCount(0)
+  test("el embudo revela currency y precio en orden", async ({ page }) => {
+    const currency = page.getByRole("radiogroup", { name: "Moneda" })
+    // Sin operación: no hay currency ni precio todavía (revelado contextual).
+    await expect(currency).toHaveCount(0)
     await expect(page.getByLabel("Máximo (USD)")).toHaveCount(0)
 
-    // Elijo operación → se revela la moneda (pero el precio sigue oculto).
+    // Elijo operación → se revela la currency (pero el precio sigue oculto).
     await page
       .getByRole("radiogroup", { name: "Operación" })
       .getByText("Venta", { exact: true })
       .click()
-    await expect(moneda).toBeVisible()
+    await expect(currency).toBeVisible()
     await expect(page.getByLabel("Máximo (USD)")).toHaveCount(0)
 
-    // Elijo moneda → se revela el rango de precio.
-    await moneda.getByText("USD", { exact: true }).click()
+    // Elijo currency → se revela el rango de precio.
+    await currency.getByText("USD", { exact: true }).click()
     await expect(page.getByLabel("Máximo (USD)")).toBeVisible()
   })
 

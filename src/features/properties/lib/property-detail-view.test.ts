@@ -1,10 +1,5 @@
-import { describe, expect, it, vi } from "vitest"
+import { describe, expect, it } from "vitest"
 import type { PropertyQueryResult } from "@/shared/sanity/sanity.types"
-
-// `property-detail-view` importa `imageUrl`, que al cargar valida el env de Sanity
-// (ausente en test). Lo stubeamos: estos casos no ejercitan imágenes (mainImage null).
-vi.mock("@/shared/sanity/image", () => ({ imageUrl: () => "https://cdn.test/img.jpg" }))
-
 import { buildPropertyMetadata } from "./property-detail-view"
 
 type Property = NonNullable<PropertyQueryResult>
