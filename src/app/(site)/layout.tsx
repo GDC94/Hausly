@@ -34,6 +34,15 @@ export default async function SiteLayout({ children }: Readonly<{ children: Reac
 
   return (
     <div className="flex min-h-screen flex-col">
+      {/* Skip link (WCAG 2.4.1 "Bypass Blocks", specs/SEO.md §6): primer elemento
+          focuseable → el usuario de teclado salta el chrome repetido y va al
+          contenido. Invisible salvo al recibir foco (`focus:not-sr-only`). */}
+      <a
+        href="#main-content"
+        className="sr-only rounded-md bg-primary px-4 py-2 text-primary-foreground focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+      >
+        Saltar al contenido
+      </a>
       <JsonLd data={agencyLd} />
       {/* `useSearchParams` del tracker exige Suspense o toda la página cae a CSR. */}
       <Suspense fallback={null}>
@@ -41,7 +50,9 @@ export default async function SiteLayout({ children }: Readonly<{ children: Reac
       </Suspense>
       <WhatsAppTelemetry />
       <SiteHeader />
-      <main className="flex-1">{children}</main>
+      <main id="main-content" className="flex-1">
+        {children}
+      </main>
       <SiteFooter />
       <ConsentBanner />
     </div>

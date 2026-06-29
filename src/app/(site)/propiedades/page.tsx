@@ -86,6 +86,11 @@ export default async function PropertiesPage({
         </aside>
 
         <div>
+          {/* Encabezado de la región de resultados: las `PropertyCard` son `h3`
+              (asumen un `h2` de sección, como en el home). En el listado el `h1`
+              es "Propiedades", así que sin este `h2` el orden salta h1→h3
+              (heading-order, specs/SEO.md §6). sr-only: el conteo ya lo muestra. */}
+          <h2 className="sr-only">Resultados de la búsqueda</h2>
           {total > 0 ? (
             <>
               <PropertyGrid properties={items} />

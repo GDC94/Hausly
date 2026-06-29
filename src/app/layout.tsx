@@ -1,3 +1,4 @@
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import { GeistSans } from "geist/font/sans"
 import type { Metadata } from "next"
 import { getSiteUrl, SITE_NAME } from "@/shared/config/site"
@@ -34,7 +35,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="es-AR" className={GeistSans.variable}>
-      <body>{children}</body>
+      <body>
+        {children}
+        {/* CWV de CAMPO nativo del deploy (specs/SEO.md §9): empieza a acumular
+            LCP/INP/CLS de usuarios reales (la métrica que Google rankea). Sin
+            cookies ni PII y anónimo → no entra al consent gate de PostHog
+            (specs/ANALYTICS.md §6); sólo emite en producción sobre Vercel. */}
+        <SpeedInsights />
+      </body>
     </html>
   )
 }
