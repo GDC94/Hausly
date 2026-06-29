@@ -4,8 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
 import { getDistinctId, hasConsent } from "@/shared/analytics"
-import { cn } from "@/shared/lib/utils"
 import { Button } from "@/shared/ui/button"
+import { Field } from "@/shared/ui/field"
+import { Input } from "@/shared/ui/input"
+import { Textarea } from "@/shared/ui/textarea"
 import { type LeadFormState, submitLead } from "../actions/submit-lead"
 import { type LeadInput, leadSchema } from "../schemas/lead-schema"
 
@@ -15,9 +17,6 @@ type LeadFormProps = {
   /** Mensaje pre-cargado (ej. desde el detalle, "Me interesa esta propiedad…"). */
   defaultMessage?: string
 }
-
-const fieldClass =
-  "h-9 rounded-md border bg-background px-3 text-body-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-[invalid=true]:border-destructive"
 
 /**
  * Formulario de consulta (specs/ARCHITECTURE.md §3, specs/LAYOUT.md §8). Valida en
@@ -77,46 +76,19 @@ export function LeadForm({ propertyId, defaultMessage }: LeadFormProps) {
       <input type="hidden" {...register("propertyId")} />
 
       <Field id="lead-name" label="Nombre" error={errors.name?.message}>
-        <input
-          id="lead-name"
-          type="text"
-          autoComplete="name"
-          aria-invalid={Boolean(errors.name)}
-          className={fieldClass}
-          {...register("name")}
-        />
+        <Input type="text" autoComplete="name" {...register("name")} />
       </Field>
 
       <Field id="lead-email" label="Email" error={errors.email?.message}>
-        <input
-          id="lead-email"
-          type="email"
-          autoComplete="email"
-          aria-invalid={Boolean(errors.email)}
-          className={fieldClass}
-          {...register("email")}
-        />
+        <Input type="email" autoComplete="email" {...register("email")} />
       </Field>
 
       <Field id="lead-phone" label="Teléfono" error={errors.phone?.message}>
-        <input
-          id="lead-phone"
-          type="tel"
-          autoComplete="tel"
-          aria-invalid={Boolean(errors.phone)}
-          className={fieldClass}
-          {...register("phone")}
-        />
+        <Input type="tel" autoComplete="tel" {...register("phone")} />
       </Field>
 
       <Field id="lead-message" label="Mensaje" error={errors.message?.message}>
-        <textarea
-          id="lead-message"
-          rows={4}
-          aria-invalid={Boolean(errors.message)}
-          className={cn(fieldClass, "h-auto py-2 leading-relaxed")}
-          {...register("message")}
-        />
+        <Textarea rows={4} {...register("message")} />
       </Field>
 
       <Button type="submit" size="lg" className="h-11 w-full" disabled={pending}>
@@ -133,32 +105,5 @@ export function LeadForm({ propertyId, defaultMessage }: LeadFormProps) {
         Dejá un email o un teléfono y te contactamos a la brevedad.
       </p>
     </form>
-  )
-}
-
-/** Campo etiquetado con mensaje de error accesible (a11y, specs/SEO.md §6). */
-function Field({
-  id,
-  label,
-  error,
-  children,
-}: {
-  id: string
-  label: string
-  error?: string
-  children: React.ReactNode
-}) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-body-sm font-medium text-foreground">
-        {label}
-      </label>
-      {children}
-      {error ? (
-        <p className="text-caption text-destructive" role="alert">
-          {error}
-        </p>
-      ) : null}
-    </div>
   )
 }

@@ -6,6 +6,8 @@ import { OPERATION_LABELS } from "@/shared/lib/labels"
 import type { ZonesQueryResult } from "@/shared/sanity/sanity.types"
 import { OPERATION_TYPES } from "@/shared/types"
 import { Button } from "@/shared/ui/button"
+import { Field } from "@/shared/ui/field"
+import { Select } from "@/shared/ui/select"
 
 /**
  * Barra de búsqueda compacta del hero (specs/LAYOUT.md §3): *entry point* al
@@ -51,33 +53,27 @@ export function HomeSearch({ zones }: { zones: ZonesQueryResult }) {
       }}
       className="flex flex-col gap-3 rounded-xl bg-background/95 p-4 shadow-lg sm:flex-row sm:items-end sm:gap-3"
     >
-      <div className="flex flex-1 flex-col gap-1.5">
-        <label htmlFor="home-operation" className="text-caption font-medium text-foreground">
-          Operación
-        </label>
-        <select id="home-operation" name="operation" defaultValue="" className={selectClass}>
+      <Field id="home-operation" label="Operación" className="flex-1">
+        <Select size="lg" name="operation" defaultValue="">
           <option value="">Cualquiera</option>
           {OPERATION_TYPES.map((value) => (
             <option key={value} value={value}>
               {OPERATION_LABELS[value]}
             </option>
           ))}
-        </select>
-      </div>
+        </Select>
+      </Field>
 
-      <div className="flex flex-1 flex-col gap-1.5">
-        <label htmlFor="home-zone" className="text-caption font-medium text-foreground">
-          Zona
-        </label>
-        <select id="home-zone" name="zone" defaultValue="" className={selectClass}>
+      <Field id="home-zone" label="Zona" className="flex-1">
+        <Select size="lg" name="zone" defaultValue="">
           <option value="">Todas</option>
           {validZones.map((zone) => (
             <option key={zone.slug} value={zone.slug}>
               {zone.name}
             </option>
           ))}
-        </select>
-      </div>
+        </Select>
+      </Field>
 
       <Button type="submit" size="lg" className="h-11 sm:w-auto">
         Buscar
@@ -85,6 +81,3 @@ export function HomeSearch({ zones }: { zones: ZonesQueryResult }) {
     </form>
   )
 }
-
-const selectClass =
-  "h-11 rounded-md border bg-background px-3 text-body-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
