@@ -3,6 +3,8 @@ import { AMENITY_LABELS, CONDITION_LABELS, PROPERTY_TYPE_LABELS } from "@/shared
 import type { ZonesQueryResult } from "@/shared/sanity/sanity.types"
 import { AMENITIES, CONDITIONS, PROPERTY_TYPES, type PropertyFilters } from "@/shared/types"
 import { Button } from "@/shared/ui/button"
+import { Field } from "@/shared/ui/field"
+import { Input } from "@/shared/ui/input"
 import { PriceFunnel } from "./price-funnel"
 
 type SearchFiltersProps = {
@@ -55,19 +57,14 @@ export function SearchFilters({ filters, zones, lockedZoneSlug }: SearchFiltersP
           form (que navega a `/propiedades`) arrastre la zona al listado. */}
       {lockedZoneSlug ? <input type="hidden" name="zone" value={lockedZoneSlug} /> : null}
 
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="filter-q" className="text-body-sm font-medium text-foreground">
-          Buscar
-        </label>
-        <input
-          id="filter-q"
-          name="q"
+      <Field id="filter-q" label="Buscar">
+        <Input
           type="search"
+          name="q"
           defaultValue={filters.q ?? ""}
           placeholder="Código, título o dirección"
-          className="h-9 rounded-md border bg-background px-3 text-body-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
         />
-      </div>
+      </Field>
 
       <PriceFunnel filters={filters} />
 
@@ -209,19 +206,8 @@ function MinNumberField({
   value: number | undefined
 }) {
   return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-body-sm text-muted-foreground">
-        {label}
-      </label>
-      <input
-        id={id}
-        name={name}
-        type="number"
-        inputMode="numeric"
-        min={1}
-        defaultValue={value ?? ""}
-        className="h-9 rounded-md border bg-background px-3 text-body-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-      />
-    </div>
+    <Field id={id} label={label} tone="muted">
+      <Input type="number" name={name} inputMode="numeric" min={1} defaultValue={value ?? ""} />
+    </Field>
   )
 }
