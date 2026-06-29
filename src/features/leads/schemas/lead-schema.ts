@@ -36,3 +36,11 @@ export const leadSchema = z
 
 /** Input validado de una consulta — el contrato que cruza cliente → servidor → core. */
 export type LeadInput = z.infer<typeof leadSchema>
+
+/**
+ * Forma de ENTRADA del schema (lo que React Hook Form maneja antes de validar): el
+ * `preprocess` del email lo deja como `unknown`, `source` es opcional por el `default`.
+ * Es el tipo de `TFieldValues` que infiere `useForm` → lo consume `LeadFormView` para
+ * que `register`/`errors` casen con el container (specs/STYLEGUIDE.md §5).
+ */
+export type LeadFormValues = z.input<typeof leadSchema>
