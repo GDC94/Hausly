@@ -1,0 +1,59 @@
+name: E2E
+
+# Gate determinista de Playwright (specs/TESTING.md §2, §4, §6) — el complemento
+# E2E del gate de calidad del #2 (ci.yml). Corre contra el PREVIEW de Vercel ya
+# deployado, no contra un build local: así testea el sistema real (RSC + Server
+# Actions + Sanity), con el bypass de Deployment Protection.
+on:
+  # Vercel publica un deploy → corremos los E2E contra ESE preview. Ojo: los
+  # workflows disparados por `deployment_status` usan SIEMPRE la copia del branch
+  # default (main), así que este trigger queda activo una vez mergeado este PR.
+  deployment_status:
+  # Para validar a mano cualquier preview (ej. el de este mismo PR antes de
+  # mergear): se le pasa la URL del preview.
+  workflow_dispatch:
+    inputs:
+      preview_url:
+        description: "URL del preview de Vercel a testear"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-${{ github.event.deployment_status.environment_url || github.event.inputs.preview_url }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    name: playwright
+    # SÓLO previews exitosos (o dispatch manual). NUNCA production: el happy-path
+    # del lead ESCRIBE en Sanity → contra prod crearía un lead de prueba real. El
+    # preview apunta al dataset de juguete (staging), production al real.
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' &&
+       contains(github.event.deployment_status.environment, 'Preview'))
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_PREVIEW_URL: ${{ github.event.inputs.preview_url || github.event.deployment_status.environment_url }}
+      # Bypass de Deployment Protection (specs/TESTING.md §4). Secret del repo,
+      # generado en Vercel (Settings → Deployment Protection). Nunca commiteado.
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:e2e
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
