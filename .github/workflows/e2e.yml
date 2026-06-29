@@ -38,19 +38,34 @@ jobs:
     runs-on: ubuntu-latest
     env:
       VERCEL_PREVIEW_URL: ${{ github.event.inputs.preview_url || github.event.deployment_status.environment_url }}
-      # Bypass de Deployment Protection (specs/TESTING.md §4). Secret del repo,
-      # generado en Vercel (Settings → Deployment Protection). Nunca commiteado.
-      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
     steps:
+      # Gate de seguridad: el bypass secret SOLO se manda a un preview de ESTE
+      # proyecto. Bloquea (a) un `workflow_dispatch` con una URL arbitraria que
+      # filtraría el secret a otro host, y (b) correr el lead-E2E (que escribe)
+      # contra production. La URL de prod (hausly.vercel.app / dominio propio) NO
+      # matchea el patrón de los previews (`hausly-<hash>-gdc94s-projects`).
+      - name: Validar que el target es un preview de Vercel de este proyecto
+        run: |
+          if [[ ! "$VERCEL_PREVIEW_URL" =~ ^https://hausly-[a-z0-9-]+-gdc94s-projects\.vercel\.app/?$ ]]; then
+            echo "::error::VERCEL_PREVIEW_URL no es un preview de Vercel válido: '$VERCEL_PREVIEW_URL'"
+            exit 1
+          fi
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
-      - run: pnpm install --frozen-lockfile
+      # `--ignore-scripts`: el job corre código del SHA del PR; sin esto, un
+      # postinstall malicioso correría ANTES del gate de URL con el secret en env.
+      - run: pnpm install --frozen-lockfile --ignore-scripts
       - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm test:e2e
+      - name: E2E
+        run: pnpm test:e2e
+        # Secret SOLO en el step que lo necesita (no a nivel job): acota la
+        # superficie de exfiltración cuando corre código de un PR (specs/TESTING.md §4).
+        env:
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
