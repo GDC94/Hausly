@@ -39,9 +39,14 @@ export async function createLead(
   }
 
   try {
+    // `leadId` linkea la conversión con el registro durable en Sanity (puente a la
+    // PII, specs/ANALYTICS.md §5). El core pasa SÓLO datos de dominio — nunca PII
+    // (email/nombre/teléfono jamás viajan al evento). El adapter traduce el `leadId`
+    // a la persona de PostHog.
     await analytics.track("lead_submitted", {
       source: input.source,
       hasProperty: Boolean(input.propertyId),
+      leadId: lead._id,
     })
   } catch (error) {
     console.error("[leads] analytics falló:", error)

@@ -1,7 +1,13 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { getProperties, LoadMore, PropertyGrid } from "@/features/properties"
-import { getZones, parseOffset, parseSearchParams, SearchFilters } from "@/features/search"
+import {
+  getZones,
+  ListingTelemetry,
+  parseOffset,
+  parseSearchParams,
+  SearchFilters,
+} from "@/features/search"
 
 type RawSearchParams = Record<string, string | string[] | undefined>
 
@@ -44,9 +50,24 @@ export default async function PropertiesPage({
 
   const loaded = items.length
   const hasMore = loaded < total
+  // Filtros activos para la telemetría: se derivan de los filtros YA PARSEADOS
+  // (`parseSearchParams`), no de los `searchParams` crudos. Esto es una allowlist —
+  // `parseSearchParams` descarta toda key desconocida, así que un `?email=…` u otro
+  // param accidental con PII nunca llega a PostHog (specs/ANALYTICS.md §1).
+  const activeFilters: Record<string, string> = {}
+  for (const [key, value] of Object.entries(filters)) {
+    if (value === undefined || value === null) continue
+    // `q` es texto libre (puede traer PII) → registramos su PRESENCIA, no el valor.
+    if (key === "q") {
+      activeFilters.q = "present"
+      continue
+    }
+    activeFilters[key] = Array.isArray(value) ? value.join(",") : String(value)
+  }
 
   return (
     <section className="mx-auto max-w-(--container-max) px-(--container-padding) py-10 lg:py-14">
+      <ListingTelemetry filters={activeFilters} offset={offset} />
       <header>
         <h1 className="text-heading text-foreground">Propiedades</h1>
         {/* `aria-live` anuncia los lotes nuevos del "Cargar más" sin recargar

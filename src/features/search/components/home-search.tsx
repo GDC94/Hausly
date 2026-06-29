@@ -1,6 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
+import { ANALYTICS_EVENTS, capture, type Operation } from "@/shared/analytics"
 import { OPERATION_LABELS } from "@/shared/lib/labels"
 import type { ZonesQueryResult } from "@/shared/sanity/sanity.types"
 import { OPERATION_TYPES } from "@/shared/types"
@@ -38,6 +39,13 @@ export function HomeSearch({ zones }: { zones: ZonesQueryResult }) {
         for (const [key, value] of data.entries()) {
           if (typeof value === "string" && value.trim()) params.set(key, value)
         }
+        // Evento entry-point del funnel (specs/ANALYTICS.md §4): qué buscó desde el
+        // hero. `""` (Cualquiera/Todas) → `"any"`/`null`. No-op hasta opt-in.
+        capture({
+          event: ANALYTICS_EVENTS.searchFromHome,
+          operation: (params.get("operation") as Operation | null) ?? "any",
+          zone: params.get("zone"),
+        })
         const query = params.toString()
         router.push(query ? `/propiedades?${query}` : "/propiedades")
       }}

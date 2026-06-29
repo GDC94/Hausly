@@ -81,6 +81,7 @@ export function SiteFooter() {
                 href={whatsappUrl()}
                 target="_blank"
                 rel="noopener noreferrer"
+                data-wa-source="footer"
                 className="inline-flex w-fit items-center gap-2 rounded-md bg-success px-4 py-2 text-body-sm font-medium text-ink transition-opacity hover:opacity-90"
               >
                 <WhatsAppIcon className="size-5" />

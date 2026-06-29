@@ -67,7 +67,12 @@ export function PropertyContactCard({
 
       <div className="mt-3">
         <Button asChild variant="outline" size="lg" className="h-11 w-full">
-          <a href={whatsappUrl(message)} target="_blank" rel="noopener noreferrer">
+          <a
+            href={whatsappUrl(message)}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-wa-source="property"
+          >
             <WhatsAppIcon className="size-4" />
             WhatsApp
           </a>

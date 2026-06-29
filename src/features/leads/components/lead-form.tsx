@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
+import { getDistinctId, hasConsent } from "@/shared/analytics"
 import { cn } from "@/shared/lib/utils"
 import { Button } from "@/shared/ui/button"
 import { type LeadFormState, submitLead } from "../actions/submit-lead"
@@ -46,8 +47,13 @@ export function LeadForm({ propertyId, defaultMessage }: LeadFormProps) {
   })
 
   function onSubmit(values: LeadInput) {
+    // Propaga el `distinct_id` + el consentimiento al Server Action: linkea el
+    // `lead_submitted` server-side al recorrido (§5) y respeta el opt-in (§6). Sin
+    // consent, el server no manda nada a PostHog (el lead igual se guarda en Sanity).
+    const distinctId = getDistinctId()
+    const consented = hasConsent()
     startTransition(async () => {
-      const result = await submitLead(values)
+      const result = await submitLead(values, distinctId, consented)
       setServerState(result)
       if (result.status === "success") {
         reset({ name: "", email: "", phone: "", message: "", propertyId, source: "form" })

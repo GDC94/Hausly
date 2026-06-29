@@ -11,6 +11,7 @@ export { PropertyFeatures } from "./components/property-features"
 export { type GalleryImage, PropertyGallery } from "./components/property-gallery"
 export { PropertyGrid } from "./components/property-grid"
 export { PropertyLocation } from "./components/property-location"
+export { PropertyViewedTracker } from "./components/property-viewed-tracker"
 export {
   buildContactMessage,
   buildPropertyMetadata,
@@ -18,6 +19,7 @@ export {
   resolveGalleryImages,
 } from "./lib/property-detail-view"
 export { buildBreadcrumbJsonLd, buildPropertyListingJsonLd } from "./lib/property-json-ld"
+export { buildPropertyViewedProps, type PropertyViewedProps } from "./lib/property-viewed"
 export {
   buildZoneListingHref,
   buildZoneMetadata,
