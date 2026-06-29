@@ -1,7 +1,7 @@
 "use server"
 
 import { logNotifier } from "../infra/log-notifier"
-import { posthogLeadAnalytics } from "../infra/posthog-lead-analytics"
+import { noopLeadAnalytics, posthogLeadAnalytics } from "../infra/posthog-lead-analytics"
 import { sanityLeadRepo } from "../infra/sanity-lead-repo"
 import { createLead } from "../lib/create-lead"
 import { leadSchema } from "../schemas/lead-schema"
@@ -28,6 +28,12 @@ export async function submitLead(
    * sin él (adblock total / sin opt-in) el lead se guarda igual, sólo sin linkear.
    */
   distinctId?: string | null,
+  /**
+   * `true` si el visitante consintió la medición (specs/ANALYTICS.md §6). El gate de
+   * consentimiento también vale server-side: sin opt-in NO se manda `lead_submitted` a
+   * PostHog (el lead igual se persiste en Sanity — eso es la transacción de negocio).
+   */
+  consented?: boolean,
 ): Promise<LeadFormState> {
   const parsed = leadSchema.safeParse(raw)
   if (!parsed.success) {
@@ -48,7 +54,8 @@ export async function submitLead(
       {
         repo: sanityLeadRepo,
         notifier: logNotifier,
-        analytics: posthogLeadAnalytics(distinctId ?? null),
+        // Sin consentimiento → adapter no-op: el lead se guarda, pero nada va a PostHog.
+        analytics: consented ? posthogLeadAnalytics(distinctId ?? null) : noopLeadAnalytics,
       },
     )
     return {

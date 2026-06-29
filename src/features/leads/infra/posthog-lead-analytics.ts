@@ -12,6 +12,16 @@ import type { LeadAnalytics } from "../lib/ports"
  * Importa de `@/shared/analytics/server` (no del barrel) para NO arrastrar
  * `posthog-js` (cliente) a un módulo de servidor.
  */
+/**
+ * Adapter no-op: se usa cuando el visitante NO consintió (specs/ANALYTICS.md §6). El
+ * lead igual se persiste en Sanity (transacción de negocio que el usuario inició),
+ * pero NADA se manda a PostHog sin opt-in — el gate de consentimiento también vale
+ * server-side, no sólo en el `capture()` del cliente.
+ */
+export const noopLeadAnalytics: LeadAnalytics = {
+  track() {},
+}
+
 export function posthogLeadAnalytics(distinctId: string | null): LeadAnalytics {
   return {
     async track(_event, props) {

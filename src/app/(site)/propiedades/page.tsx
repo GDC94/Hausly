@@ -50,12 +50,19 @@ export default async function PropertiesPage({
 
   const loaded = items.length
   const hasMore = loaded < total
-  // Filtros activos para la telemetría (raw de la URL, sin `offset`): el listado es
-  // un Server Component sin onClick, así que el evento se deriva del estado de la URL.
+  // Filtros activos para la telemetría: se derivan de los filtros YA PARSEADOS
+  // (`parseSearchParams`), no de los `searchParams` crudos. Esto es una allowlist —
+  // `parseSearchParams` descarta toda key desconocida, así que un `?email=…` u otro
+  // param accidental con PII nunca llega a PostHog (specs/ANALYTICS.md §1).
   const activeFilters: Record<string, string> = {}
-  for (const [key, value] of Object.entries(sp)) {
-    if (key === "offset" || value === undefined) continue
-    activeFilters[key] = Array.isArray(value) ? value.join(",") : value
+  for (const [key, value] of Object.entries(filters)) {
+    if (value === undefined || value === null) continue
+    // `q` es texto libre (puede traer PII) → registramos su PRESENCIA, no el valor.
+    if (key === "q") {
+      activeFilters.q = "present"
+      continue
+    }
+    activeFilters[key] = Array.isArray(value) ? value.join(",") : String(value)
   }
 
   return (

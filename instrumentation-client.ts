@@ -11,6 +11,11 @@ import posthog from "posthog-js"
  *   en UN solo lugar.
  * - `capture_pageview: false` → App Router NO auto-captura navegaciones; el
  *   `PageviewTracker` las dispara a mano (§3).
+ * - `autocapture: false` → medimos SÓLO el funnel curado, no clicks/forms automáticos
+ *   (§1 "intencional, no autocapture"). Evita además filtrar metadata del form de lead
+ *   fuera del gate tipado de `capture()`.
+ * - `persistence: "memory"` hasta el opt-in → NO se escribe cookie/localStorage del SDK
+ *   antes del consentimiento (§6). `grantConsent()` eleva la persistencia al aceptar.
  * - Sin session replay (§7): pesado para CWV/privacidad.
  *
  * Sin env (preview/build sin claves) → no inicializa: el wrapper queda no-op.
@@ -24,8 +29,9 @@ if (key) {
     defaults: "2025-05-24",
     capture_pageview: false,
     capture_pageleave: true,
+    autocapture: false,
     opt_out_capturing_by_default: true,
-    persistence: "localStorage+cookie",
+    persistence: "memory",
     disable_session_recording: true,
   })
 }
