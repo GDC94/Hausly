@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { isBlocked } from "./_lib/blindaje"
+import { isBlocked } from "@/shared/styleguide"
 
 // `noindex` (capa 2 del blindaje, specs/STYLEGUIDE.md §2): la vitrina nunca entra a
 // buscadores aunque se filtre una URL de preview. El robots.txt (capa 3) la refuerza.

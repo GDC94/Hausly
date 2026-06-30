@@ -1,9 +1,8 @@
 "use client"
 
 import { useForm } from "react-hook-form"
-import { LeadFormView } from "@/features/leads/components/lead-form-view"
-import type { LeadFormValues } from "@/features/leads/schemas/lead-schema"
-import { Specimen } from "./specimen"
+import { type LeadFormValues, LeadFormView } from "@/features/leads"
+import { Specimen } from "@/shared/styleguide"
 
 // Island cliente: exhibe los 3 estados del LeadForm vía LeadFormView (la vista pura del
 // split #37). RSC no puede pasar handlers (onChange/onBlur de `register`) a inputs host,
@@ -30,6 +29,7 @@ export function LeadFormStates() {
     <div className="flex flex-col gap-4">
       <Specimen label="LeadForm · idle">
         <LeadFormView
+          idPrefix="sg-idle-"
           register={register}
           errors={errors}
           pending={false}
@@ -39,6 +39,7 @@ export function LeadFormStates() {
       </Specimen>
       <Specimen label="LeadForm · error (server)">
         <LeadFormView
+          idPrefix="sg-error-"
           register={register}
           errors={errors}
           pending={false}
@@ -64,6 +65,7 @@ export function LeadFormIdle() {
   const { register, errors } = useLeadFormBindings()
   return (
     <LeadFormView
+      idPrefix="sg-detail-"
       register={register}
       errors={errors}
       pending={false}

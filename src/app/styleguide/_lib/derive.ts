@@ -1,4 +1,4 @@
-import type { PropertyCardData } from "@/features/properties/types"
+import type { PropertyCardData } from "@/features/properties"
 
 /**
  * Helpers de estados borde de la vitrina `/styleguide` (specs/STYLEGUIDE.md §4).

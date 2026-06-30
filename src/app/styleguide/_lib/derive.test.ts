@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import type { PropertyCardData } from "@/features/properties/types"
+import type { PropertyCardData } from "@/features/properties"
 import { emptyGrid, withLongTitle, withoutImage } from "./derive"
 
 // Los estados borde de la vitrina se DERIVAN copiando un doc real (specs/STYLEGUIDE.md

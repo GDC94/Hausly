@@ -9,8 +9,8 @@ import {
   PropertyLocation,
   resolveGalleryImages,
 } from "@/features/properties"
+import { Specimen } from "@/shared/styleguide"
 import { LeadFormIdle } from "../_components/lead-form-specimens"
-import { Specimen } from "../_components/specimen"
 
 /**
  * Sección `detail` (specs/STYLEGUIDE.md §5): los componentes del detalle sobre UNA

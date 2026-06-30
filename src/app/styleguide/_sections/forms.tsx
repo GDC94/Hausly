@@ -1,6 +1,6 @@
 import { getZones, parseSearchParams, SearchFilters } from "@/features/search"
+import { Specimen } from "@/shared/styleguide"
 import { LeadFormStates } from "../_components/lead-form-specimens"
-import { Specimen } from "../_components/specimen"
 
 /**
  * Sección `forms` (specs/STYLEGUIDE.md §5): LeadForm en sus 3 estados (vía LeadFormView,

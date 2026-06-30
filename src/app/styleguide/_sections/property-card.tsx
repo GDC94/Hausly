@@ -6,7 +6,7 @@ import {
   PropertyCard,
   PropertyGrid,
 } from "@/features/properties"
-import { Specimen } from "../_components/specimen"
+import { Specimen } from "@/shared/styleguide"
 import { emptyGrid, withLongTitle, withoutImage } from "../_lib/derive"
 
 /**

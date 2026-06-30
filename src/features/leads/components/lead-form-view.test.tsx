@@ -84,4 +84,15 @@ describe("LeadFormView", () => {
     screen.getByRole("button", { name: "Enviar consulta" }).click()
     expect(onSubmit).toHaveBeenCalledTimes(1)
   })
+
+  it("sin idPrefix: ids estables (un form por página)", () => {
+    renderView()
+    expect(screen.getByLabelText("Nombre")).toHaveAttribute("id", "lead-name")
+  })
+
+  it("con idPrefix: prefija los ids (varios forms por página sin colisión)", () => {
+    renderView({ idPrefix: "sg-error-" })
+    // El label sigue asociado al control (Field liga htmlFor↔id) pero el id es único.
+    expect(screen.getByLabelText("Nombre")).toHaveAttribute("id", "sg-error-lead-name")
+  })
 })

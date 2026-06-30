@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { Specimen } from "@/shared/styleguide"
 import { Button } from "@/shared/ui/button"
 import { Field } from "@/shared/ui/field"
 import {
@@ -13,7 +14,6 @@ import { Input } from "@/shared/ui/input"
 import { Label } from "@/shared/ui/label"
 import { Select } from "@/shared/ui/select"
 import { Textarea } from "@/shared/ui/textarea"
-import { Specimen } from "../_components/specimen"
 
 const BUTTON_VARIANTS = ["default", "secondary", "outline", "ghost", "destructive", "link"] as const
 const TEXT_SIZES = ["xs", "sm", "default", "lg"] as const
@@ -73,14 +73,19 @@ export function PrimitivesSection() {
         <Specimen label="Input · xs / sm / default / lg">
           <div className="flex flex-col gap-3">
             {FIELD_SIZES.map((size) => (
-              <Input key={size} size={size} placeholder={`Input ${size}`} />
+              <Input
+                key={size}
+                size={size}
+                placeholder={`Input ${size}`}
+                aria-label={`Input ${size}`}
+              />
             ))}
           </div>
         </Specimen>
         <Specimen label="Input · error (aria-invalid) · disabled">
           <div className="flex flex-col gap-3">
-            <Input aria-invalid defaultValue="valor inválido" />
-            <Input disabled placeholder="deshabilitado" />
+            <Input aria-invalid defaultValue="valor inválido" aria-label="Input con error" />
+            <Input disabled placeholder="deshabilitado" aria-label="Input deshabilitado" />
           </div>
         </Specimen>
       </Group>
@@ -89,7 +94,7 @@ export function PrimitivesSection() {
         <Specimen label="Select · xs / sm / default / lg">
           <div className="flex flex-col gap-3">
             {FIELD_SIZES.map((size) => (
-              <Select key={size} size={size} defaultValue="">
+              <Select key={size} size={size} defaultValue="" aria-label={`Select ${size}`}>
                 <option value="" disabled>
                   Elegí una opción
                 </option>
@@ -101,10 +106,10 @@ export function PrimitivesSection() {
         </Specimen>
         <Specimen label="Select · error (aria-invalid) · disabled">
           <div className="flex flex-col gap-3">
-            <Select aria-invalid defaultValue="sale">
+            <Select aria-invalid defaultValue="sale" aria-label="Select con error">
               <option value="sale">Venta</option>
             </Select>
-            <Select disabled defaultValue="sale">
+            <Select disabled defaultValue="sale" aria-label="Select deshabilitado">
               <option value="sale">Venta</option>
             </Select>
           </div>
@@ -114,9 +119,19 @@ export function PrimitivesSection() {
       <Group title="Textarea">
         <Specimen label="Textarea · default · error (aria-invalid) · disabled">
           <div className="flex flex-col gap-3">
-            <Textarea rows={3} placeholder="Mensaje…" />
-            <Textarea rows={3} aria-invalid defaultValue="contenido inválido" />
-            <Textarea rows={3} disabled placeholder="deshabilitado" />
+            <Textarea rows={3} placeholder="Mensaje…" aria-label="Textarea" />
+            <Textarea
+              rows={3}
+              aria-invalid
+              defaultValue="contenido inválido"
+              aria-label="Textarea con error"
+            />
+            <Textarea
+              rows={3}
+              disabled
+              placeholder="deshabilitado"
+              aria-label="Textarea deshabilitado"
+            />
           </div>
         </Specimen>
       </Group>

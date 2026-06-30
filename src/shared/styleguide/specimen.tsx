@@ -11,7 +11,8 @@ type SpecimenProps = {
 /**
  * Espécimen: wrapper presentacional con un encabezado liviano que nombra el componente
  * y la variante/estado (specs/STYLEGUIDE.md §6). Hace la vitrina un banco de revisión
- * —se sabe qué se mira— en vez de un volcado de renders. Usa sólo tokens de DESIGN.md.
+ * —se sabe qué se mira— en vez de un volcado de renders. Es feature-agnóstico (sólo
+ * tokens de DESIGN.md) → vive en `shared/`.
  *
  * `framed` crea un contenedor con su propio contexto de scroll (`overflow`): contiene
  * los `sticky` del chrome (SiteHeader) sin que se peguen a la página de la vitrina (§5).

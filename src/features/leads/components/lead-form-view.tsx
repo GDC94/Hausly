@@ -17,6 +17,13 @@ type LeadFormViewProps = {
   serverState: LeadFormState | null
   /** Handler de submit (en el container es `handleSubmit(onSubmit)`). */
   onSubmit: React.FormEventHandler<HTMLFormElement>
+  /**
+   * Prefijo opcional para los `id` de los campos. Default `""` → ids estables
+   * (`lead-name`…) para el caso normal de un form por página. Permite montar VARIOS
+   * forms en una misma página sin colisión de ids (ej. la vitrina con los 3 estados,
+   * o contacto + newsletter en una landing) — la asociación label↔control sigue intacta.
+   */
+  idPrefix?: string
 }
 
 /**
@@ -32,6 +39,7 @@ export function LeadFormView({
   pending,
   serverState,
   onSubmit,
+  idPrefix = "",
 }: LeadFormViewProps) {
   if (serverState?.status === "success") {
     return (
@@ -48,19 +56,19 @@ export function LeadFormView({
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
       <input type="hidden" {...register("propertyId")} />
 
-      <Field id="lead-name" label="Nombre" error={errors.name?.message}>
+      <Field id={`${idPrefix}lead-name`} label="Nombre" error={errors.name?.message}>
         <Input type="text" autoComplete="name" {...register("name")} />
       </Field>
 
-      <Field id="lead-email" label="Email" error={errors.email?.message}>
+      <Field id={`${idPrefix}lead-email`} label="Email" error={errors.email?.message}>
         <Input type="email" autoComplete="email" {...register("email")} />
       </Field>
 
-      <Field id="lead-phone" label="Teléfono" error={errors.phone?.message}>
+      <Field id={`${idPrefix}lead-phone`} label="Teléfono" error={errors.phone?.message}>
         <Input type="tel" autoComplete="tel" {...register("phone")} />
       </Field>
 
-      <Field id="lead-message" label="Mensaje" error={errors.message?.message}>
+      <Field id={`${idPrefix}lead-message`} label="Mensaje" error={errors.message?.message}>
         <Textarea rows={4} {...register("message")} />
       </Field>
 

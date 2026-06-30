@@ -1,6 +1,6 @@
+import { Specimen } from "@/shared/styleguide"
 import { SiteFooter } from "@/shared/ui/site-footer"
 import { SiteHeader } from "@/shared/ui/site-header"
-import { Specimen } from "../_components/specimen"
 
 /**
  * Sección `chrome` (specs/STYLEGUIDE.md §5): SiteHeader (sticky) y SiteFooter. El header
@@ -16,7 +16,7 @@ export function ChromeSection() {
         </h3>
         <Specimen label="SiteHeader · sticky, en marco contenido" framed>
           {/* Alto extra para que el sticky tenga contra qué pegarse dentro del marco. */}
-          <div className="h-[32rem]">
+          <div className="h-96">
             <SiteHeader />
             <div className="px-4 py-6 text-body-sm text-muted-foreground">
               Scrolleá dentro del marco: el header queda pegado arriba.
