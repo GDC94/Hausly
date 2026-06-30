@@ -20,7 +20,7 @@ const AI_BOTS = [
 // en cada ruta (§2), no acá. Apunta al sitemap.
 export default function robots(): MetadataRoute.Robots {
   const siteUrl = getSiteUrl()
-  const disallow = ["/studio", "/api/"]
+  const disallow = ["/studio", "/styleguide", "/api/"]
 
   return {
     rules: [
