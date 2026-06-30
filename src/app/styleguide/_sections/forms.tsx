@@ -1,8 +1,31 @@
-/** Sección `forms` — pendiente (batch 3: LeadForm vía LeadFormView + SearchFilters/PriceFunnel con data). */
-export function FormsSection() {
+import { getZones, parseSearchParams, SearchFilters } from "@/features/search"
+import { LeadFormStates } from "../_components/lead-form-specimens"
+import { Specimen } from "../_components/specimen"
+
+/**
+ * Sección `forms` (specs/STYLEGUIDE.md §5): LeadForm en sus 3 estados (vía LeadFormView,
+ * sin disparar la acción) y SearchFilters con `zones` reales. PriceFunnel se exhibe
+ * dentro de SearchFilters (su padre) — revelado por operación.
+ */
+export async function FormsSection() {
+  const zones = await getZones()
+  const filters = parseSearchParams({})
+
   return (
-    <p className="text-body text-muted-foreground">
-      Sección pendiente — se implementa con data real de staging (specs/STYLEGUIDE.md §5).
-    </p>
+    <div className="flex flex-col gap-10">
+      <section className="flex flex-col gap-4">
+        <h3 className="text-body font-semibold text-foreground">LeadForm</h3>
+        <LeadFormStates />
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h3 className="text-body font-semibold text-foreground">
+          SearchFilters <span className="text-muted-foreground">(incluye PriceFunnel)</span>
+        </h3>
+        <Specimen label="SearchFilters · zones reales">
+          <SearchFilters filters={filters} zones={zones} />
+        </Specimen>
+      </section>
+    </div>
   )
 }
